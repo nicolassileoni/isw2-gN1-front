@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:8080
+
+### Crear un local de prueba
+# Guardar el id que devuelve la respuesta y actualizar @localId abajo.
+POST {{baseUrl}}/api/locales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Rotisería del Puerto",
+  "direccion": "Belgrano 1250",
+  "telefono": "3425000001"
+}
+
+### Crear otro local de prueba
+POST {{baseUrl}}/api/locales
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Sabores de la Costa",
+  "direccion": "San Martín 850",
+  "telefono": "3425000002"
+}
+
+@localId = 1
+
+### Crear producto: la categoría 1 es Pizzas
+POST {{baseUrl}}/api/productos
+Content-Type: application/json
+Accept: application/json
+
+{
+  "localId": {{localId}},
+  "categoriaId": 1,
+  "nombre": "Pizza mozzarella",
+  "descripcion": "Salsa de tomate y mozzarella",
+  "precio": 9500.00,
+  "stock": 12
+}
+
+### Crear producto sin stock: la categoría 4 es Bebidas
+POST {{baseUrl}}/api/productos
+Content-Type: application/json
+Accept: application/json
+
+{
+  "localId": {{localId}},
+  "categoriaId": 4,
+  "nombre": "Gaseosa cola 1,5 L",
+  "descripcion": "Bebida sin alcohol",
+  "precio": 2800.00,
+  "stock": 0
+}
+
+### Comprobar los locales públicos
+GET {{baseUrl}}/api/locales
+Accept: application/json

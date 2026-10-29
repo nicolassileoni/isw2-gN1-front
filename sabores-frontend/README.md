@@ -47,6 +47,10 @@ La URL del servidor se configura con `EXPO_PUBLIC_API_URL`.
 
 El celular y la PC deben estar en la misma red y el puerto 8080 debe estar habilitado en el firewall. La app nativa no necesita CORS; la versión web sí, y el backend actual no lo configura.
 
+La capa HTTP usa `http://localhost:8080` si la variable no está definida. Para probar la conexión durante el desarrollo existe la ruta temporal `/api-diagnostics`, que ejecuta `GET /api/locales` y muestra los estados de carga, error o respuesta.
+
+Para sembrar datos de prueba con la extensión REST Client de VS Code, usar [`docs/http/seed-dev.http`](docs/http/seed-dev.http). Después de crear un local, actualizar `@localId` con el identificador recibido antes de crear sus productos.
+
 ## Estructura
 
 ```text
