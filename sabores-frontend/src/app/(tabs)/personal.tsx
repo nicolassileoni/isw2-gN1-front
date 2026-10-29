@@ -44,7 +44,7 @@ export default function PersonalScreen() {
         />
         <Button title="Ingresar" disabled />
         <AppText variant="caption" color={palette.warmGray} style={styles.helper}>
-          El login se habilita en la próxima etapa. No hay registro de clientes.
+          Usá el usuario y la contraseña que te asignó el administrador.
         </AppText>
       </Card>
     </Screen>

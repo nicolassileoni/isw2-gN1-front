@@ -68,11 +68,11 @@ export default function HomeScreen() {
         </View>
       </Card>
 
-      <SectionHeader title="Locales" subtitle="Próximamente" />
+      <SectionHeader title="Locales" subtitle="Adheridos" />
       <EmptyState
         icon="storefront-outline"
-        title="Estamos preparando el catálogo"
-        description="Muy pronto vas a poder ver los locales adheridos y su carta."
+        title="Todavía no hay locales disponibles"
+        description="Cuando se sumen locales adheridos, vas a poder ver su carta y hacer un pedido."
       />
     </Screen>
   );

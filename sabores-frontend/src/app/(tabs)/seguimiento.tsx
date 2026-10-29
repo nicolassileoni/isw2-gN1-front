@@ -34,10 +34,10 @@ export default function SeguimientoScreen() {
       </Card>
 
       <Card style={styles.note}>
-        <AppText variant="label">Muy pronto</AppText>
+        <AppText variant="label">Cómo funciona</AppText>
         <AppText variant="body" color={palette.warmGray}>
-          La consulta pública se habilita cuando se conecte el backend. No vas a ver datos
-          personales, solo el estado, el local, los productos y el total.
+          Cuando confirmes un pedido vas a recibir un código. Ingresalo acá para consultar el
+          estado, el local, los productos y el total.
         </AppText>
       </Card>
     </Screen>
