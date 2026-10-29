@@ -1,56 +1,68 @@
-# Welcome to your Expo app 👋
+# Sabores del Litoral — Frontend mobile
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación mobile de delivery para Sabores del Litoral. El cliente está hecho con Expo/React Native y consume la API REST del backend Spring Boot.
 
-## Get started
+## Stack
 
-1. Install dependencies
+- Expo SDK 57
+- React Native 0.86
+- React 19
+- TypeScript estricto
+- Expo Router
+- Backend: Spring Boot 4.1.1 / Java 21 / H2
 
-   ```bash
-   npm install
-   ```
+## Requisitos
 
-2. Start the app
+- Node.js LTS
+- npm
+- Expo Go en el celular o un emulador Android/iOS
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Cómo levantar la app
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Luego escanear el QR con Expo Go o abrir el emulador desde la terminal.
 
-### Other setup steps
+## Comandos
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+npx expo start          # servidor de desarrollo
+npx expo lint           # lint
+npx tsc --noEmit        # typecheck
+npx expo-doctor         # diagnóstico de dependencias/configuración
+```
 
-## Learn more
+## Configuración de la API
 
-To learn more about developing your project with Expo, look at the following resources:
+La URL del servidor se configura con `EXPO_PUBLIC_API_URL`.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+| Entorno | URL |
+|---|---|
+| Simulador iOS | `http://localhost:8080` |
+| Emulador Android | `http://10.0.2.2:8080` |
+| Celular físico con Expo Go | `http://<IP-LAN-de-la-PC>:8080` |
 
-## Join the community
+El celular y la PC deben estar en la misma red y el puerto 8080 debe estar habilitado en el firewall. La app nativa no necesita CORS; la versión web sí, y el backend actual no lo configura.
 
-Join our community of developers creating universal apps.
+## Estructura
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```text
+src/
+  app/                 rutas de Expo Router
+    (tabs)/            Inicio, Seguir y Personal
+    local/[id].tsx     carta del local
+    +not-found.tsx
+  components/ui/       componentes reutilizables
+  constants/theme.ts   colores, tipografía, espaciado, radios y layout
+  lib/format.ts        moneda, fechas y códigos
+  features/            componentes de dominio
+```
+
+## Notas técnicas
+
+- El backend actual no expone tokens JWT ni aplica autorización por roles.
+- La base arranca sin locales ni productos. Para probar el catálogo hay que cargarlos por H2 o por los endpoints de administración.
+- La app se mantiene en tema claro.
