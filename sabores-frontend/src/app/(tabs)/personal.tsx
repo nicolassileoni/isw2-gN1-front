@@ -40,6 +40,11 @@ export default function PersonalScreen() {
         password,
       });
 
+      if (!sesion.token) {
+        setError('El servidor no devolvió un token de seguridad. Verificá que el backend esté actualizado.');
+        return;
+      }
+
       login(sesion);
       setPassword('');
       router.replace('/(tabs)/pedidos');
@@ -57,7 +62,7 @@ export default function PersonalScreen() {
     }
   };
 
-  if (user) {
+  if (user?.token) {
     return (
       <Screen scroll contentContainerStyle={styles.screen}>
         <View style={styles.header}>
