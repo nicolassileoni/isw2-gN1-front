@@ -53,3 +53,11 @@ export function formatDateInput(date: Date): string {
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
+
+/** Muestra AAAA-MM-DD como DD/MM/AAAA sin convertir la fecha a UTC. */
+export function formatDateInputLabel(value: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const [year, month, day] = value.split('-');
+  return `${day}/${month}/${year}`;
+}
