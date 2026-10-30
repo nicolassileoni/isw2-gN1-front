@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Alert, Pressable, SectionList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -107,10 +107,24 @@ export default function LocalScreen() {
     })) ?? [],
     [carta],
   );
-  const refetch = () => {
+  const refetch = useCallback(() => {
     refetchCarta();
     refetchLocal();
-  };
+  }, [refetchCarta, refetchLocal]);
+
+  // Al volver del checkout tras un 409 (stock/local cambiaron) la carta tiene que
+  // reflejar el estado real: RN-02 pide refrescarla después de ese error.
+  const primeraVez = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (primeraVez.current) {
+        primeraVez.current = false;
+        return;
+      }
+
+      refetch();
+    }, [refetch]),
+  );
   const addToCart = (producto: ProductoCartaResponse) => {
     if (!carta) return;
     const selectedLocal = { id: carta.localId, nombre: carta.localNombre };

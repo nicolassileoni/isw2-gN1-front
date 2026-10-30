@@ -61,13 +61,14 @@ function RepartidorCard({
           <AppText variant="label" numberOfLines={1}>
             {repartidor.nombreCompleto}
           </AppText>
-          <AppText variant="caption" color={palette.warmGray}>
+          <AppText variant="caption" color={lleno ? palette.warning : palette.warmGray}>
             {lleno ? 'Carga completa' : 'Puede tomar más pedidos'}
           </AppText>
         </View>
         <Badge
           label={cargaLabel(repartidor.cantidadPedidos)}
-          tone={lleno ? 'danger' : repartidor.cantidadPedidos === 0 ? 'neutral' : 'warning'}
+          icon="bicycle-outline"
+          tone={lleno ? 'warning' : repartidor.cantidadPedidos === 0 ? 'neutral' : 'info'}
         />
       </View>
 
@@ -228,9 +229,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 8,
     borderRadius: radii.pill,
-    backgroundColor: palette.fog,
+    backgroundColor: palette.sand,
   },
-  segmentoLleno: { backgroundColor: palette.ember },
+  segmentoLleno: { backgroundColor: palette.info },
   codigos: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   codigo: {
     flexDirection: 'row',

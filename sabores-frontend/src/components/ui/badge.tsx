@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import type { ComponentProps } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
@@ -8,6 +10,8 @@ export type BadgeTone = 'accent' | 'success' | 'info' | 'warning' | 'danger' | '
 type BadgeProps = {
   label: string;
   tone?: BadgeTone;
+  /** DESIGN 8.14: el estado nunca se comunica solo con color. */
+  icon?: ComponentProps<typeof Ionicons>['name'];
   style?: StyleProp<ViewStyle>;
 };
 
@@ -20,11 +24,12 @@ const toneStyles: Record<BadgeTone, { backgroundColor: string; color: string }> 
   neutral: { backgroundColor: semantic.neutralSoft, color: palette.slate },
 };
 
-export function Badge({ label, tone = 'neutral', style }: BadgeProps) {
+export function Badge({ label, tone = 'neutral', icon, style }: BadgeProps) {
   const colors = toneStyles[tone];
 
   return (
     <View style={[styles.badge, { backgroundColor: colors.backgroundColor }, style]}>
+      {icon ? <Ionicons name={icon} size={14} color={colors.color} /> : null}
       <AppText variant="overline" color={colors.color}>
         {label}
       </AppText>
@@ -38,6 +43,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: spacing.xs,
     paddingHorizontal: spacing.md,
     borderRadius: radii.pill,
   },

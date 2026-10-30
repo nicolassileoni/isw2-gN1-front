@@ -64,8 +64,16 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
         <Button title="Vaciar pedido" variant="destructive" onPress={clearWithConfirmation} />
         <Divider />
         <View style={styles.summaryRow}><AppText variant="body">Subtotal</AppText><MoneyText amount={totals.subtotal} variant="body" /></View>
-        <View style={styles.summaryRow}><AppText variant="body">Descuento</AppText><MoneyText amount={-totals.descuento} variant="body" /></View>
-        <View style={styles.summaryRow}><AppText variant="body">Envío</AppText><MoneyText amount={totals.envio} variant="body" /></View>
+        {totals.descuento > 0 ? (
+          <View style={styles.summaryRow}>
+            <View style={styles.discountCopy}>
+              <AppText variant="body" color={palette.success}>Descuento 10 %</AppText>
+              <AppText variant="caption" color={palette.warmGray}>Por superar $ 20.000</AppText>
+            </View>
+            <MoneyText amount={-totals.descuento} variant="body" color={palette.success} />
+          </View>
+        ) : null}
+        <View style={styles.summaryRow}><AppText variant="body">Envío fijo</AppText><MoneyText amount={totals.envio} variant="body" /></View>
         <AppText variant="caption" color={palette.warmGray}>El total final lo calcula el backend al confirmar el pedido.</AppText>
       </View>
     </BottomSheet>
@@ -77,6 +85,7 @@ const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   itemCopy: { flex: 1, gap: spacing.xs },
   summaryRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
+  discountCopy: { flex: 1, gap: 2 },
   footer: { gap: spacing.md },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
 });

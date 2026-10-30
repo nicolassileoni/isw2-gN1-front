@@ -69,6 +69,7 @@ export default function CheckoutScreen() {
           total: String(response.total),
           estado: response.estado,
           fechaHora: response.fechaHora,
+          local: local.nombre,
         },
       });
     } catch (error: unknown) {

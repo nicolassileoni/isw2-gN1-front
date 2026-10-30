@@ -83,8 +83,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   markerDone: {
-    backgroundColor: palette.ember,
-    borderColor: palette.ember,
+    backgroundColor: palette.success,
+    borderColor: palette.success,
   },
   markerCurrent: {
     borderColor: palette.ember,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.sand,
   },
   connectorDone: {
-    backgroundColor: palette.ember,
+    backgroundColor: palette.success,
   },
   stepCopy: {
     flex: 1,

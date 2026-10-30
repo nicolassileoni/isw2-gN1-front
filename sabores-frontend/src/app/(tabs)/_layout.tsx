@@ -26,12 +26,8 @@ export default function TabsLayout() {
           title: 'Inicio',
           href: publico ? undefined : null,
           tabBarAccessibilityLabel: 'Inicio',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'storefront' : 'storefront-outline'}
-              size={size}
-              color={color}
-            />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="storefront-outline" size={size} color={color} />
           ),
         }}
       />
@@ -41,8 +37,8 @@ export default function TabsLayout() {
           title: 'Seguir',
           href: publico ? undefined : null,
           tabBarAccessibilityLabel: 'Seguir pedido',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'search' : 'search-outline'} size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="search-outline" size={size} color={color} />
           ),
         }}
       />
@@ -52,8 +48,8 @@ export default function TabsLayout() {
           title: 'Personal',
           href: publico ? undefined : null,
           tabBarAccessibilityLabel: 'Acceso del personal',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'person' : 'person-outline'} size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
           ),
         }}
       />
@@ -65,8 +61,8 @@ export default function TabsLayout() {
           title: 'Pedidos',
           href: publico ? null : undefined,
           tabBarAccessibilityLabel: 'Pedidos',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt-outline" size={size} color={color} />
           ),
         }}
       />
@@ -76,8 +72,8 @@ export default function TabsLayout() {
           title: 'En la calle',
           href: publico ? null : undefined,
           tabBarAccessibilityLabel: 'Pedidos en la calle',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'bicycle' : 'bicycle-outline'} size={size} color={color} />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bicycle-outline" size={size} color={color} />
           ),
         }}
       />
@@ -87,12 +83,8 @@ export default function TabsLayout() {
           title: 'Gestión',
           href: isAdmin ? undefined : null,
           tabBarAccessibilityLabel: 'Gestión',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'settings' : 'settings-outline'}
-              size={size}
-              color={color}
-            />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />
@@ -102,12 +94,8 @@ export default function TabsLayout() {
           title: 'Cuenta',
           href: publico ? null : undefined,
           tabBarAccessibilityLabel: 'Mi cuenta',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'person-circle' : 'person-circle-outline'}
-              size={size}
-              color={color}
-            />
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-circle-outline" size={size} color={color} />
           ),
         }}
       />

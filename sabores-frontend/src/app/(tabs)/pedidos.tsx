@@ -20,7 +20,7 @@ import { useApi } from '@/hooks/use-api';
 import { apiClient } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
 import type { EstadoPedido, PedidoResumenResponse } from '@/lib/api/types';
-import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
+import { ESTADO_PEDIDO_ICON, ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
 import { formatDateTime, normalizeTrackingCode } from '@/lib/format';
 
 type Filtro = { valor: EstadoPedido | null; label: string };
@@ -63,6 +63,7 @@ function PedidoCard({ pedido }: { pedido: PedidoResumenResponse }) {
         </AppText>
         <Badge
           label={ESTADO_PEDIDO_LABEL[pedido.estado]}
+          icon={ESTADO_PEDIDO_ICON[pedido.estado]}
           tone={ESTADO_PEDIDO_TONE[pedido.estado]}
         />
       </View>

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import {
   AppText,
@@ -22,7 +22,7 @@ import { OrderTimeline } from '@/components/order-timeline';
 import { CODIGO_SEGUIMIENTO_LENGTH, useSeguimiento } from '@/features/seguimiento/use-seguimiento';
 import { ApiHttpError } from '@/lib/api/client';
 import type { SeguimientoResponse } from '@/lib/api/types';
-import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
+import { ESTADO_PEDIDO_ICON, ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
 import { formatDateTime, formatMoney, normalizeTrackingCode } from '@/lib/format';
 
 function SeguimientoSkeleton() {
@@ -40,9 +40,11 @@ function SeguimientoSkeleton() {
 function ResultadoPedido({
   pedido,
   onCopiar,
+  copiado,
 }: {
   pedido: SeguimientoResponse;
   onCopiar: () => void;
+  copiado: boolean;
 }) {
   const cancelado = pedido.estado === 'CANCELADO';
 
@@ -57,12 +59,12 @@ function ResultadoPedido({
         </AppText>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Copiar código de seguimiento"
+          accessibilityLabel={copiado ? 'Código copiado' : 'Copiar código de seguimiento'}
           onPress={onCopiar}
           style={({ pressed }) => [styles.copyButton, pressed && styles.pressed]}>
           <Ionicons name="copy-outline" size={16} color={palette.ink} />
           <AppText variant="caption" color={palette.ink}>
-            Copiar código
+            {copiado ? 'Copiado' : 'Copiar código'}
           </AppText>
         </Pressable>
       </Card>
@@ -72,6 +74,7 @@ function ResultadoPedido({
           <AppText variant="label">Estado del pedido</AppText>
           <Badge
             label={ESTADO_PEDIDO_LABEL[pedido.estado]}
+            icon={ESTADO_PEDIDO_ICON[pedido.estado]}
             tone={ESTADO_PEDIDO_TONE[pedido.estado]}
           />
         </View>
@@ -138,6 +141,7 @@ export default function SeguimientoScreen() {
   const { codigo, data, loading, error, buscar, reintentar, limpiar } = useSeguimiento();
   const [input, setInput] = useState('');
   const [fieldError, setFieldError] = useState<string | null>(null);
+  const [copiado, setCopiado] = useState(false);
   const codigoDesdeNavegacion = useRef<string | null>(null);
 
   useEffect(() => {
@@ -193,8 +197,15 @@ export default function SeguimientoScreen() {
     if (!codigoCopiable) return;
 
     await Clipboard.setStringAsync(codigoCopiable);
-    Alert.alert('Código copiado', 'Guardalo para volver a consultar tu pedido.');
+    setCopiado(true);
   };
+
+  useEffect(() => {
+    if (!copiado) return undefined;
+
+    const timer = setTimeout(() => setCopiado(false), 2000);
+    return () => clearTimeout(timer);
+  }, [copiado]);
 
   const noEncontrado = error instanceof ApiHttpError && error.status === 404;
 
@@ -236,7 +247,7 @@ export default function SeguimientoScreen() {
 
       {loading ? <SeguimientoSkeleton /> : null}
 
-      {!loading && data ? <ResultadoPedido pedido={data} onCopiar={copiarCodigo} /> : null}
+      {!loading && data ? <ResultadoPedido pedido={data} onCopiar={copiarCodigo} copiado={copiado} /> : null}
 
       {!loading && error && noEncontrado ? (
         <EmptyState

@@ -122,16 +122,17 @@ export function AsignarRepartidorSheet({
                   <AppText variant="label">{repartidor.nombreCompleto}</AppText>
                   <AppText
                     variant="caption"
-                    color={lleno ? palette.danger : palette.warmGray}>
+                    color={lleno ? palette.warning : palette.warmGray}>
                     {lleno
-                      ? 'Carga completa'
+                      ? `Carga completa: ${cargaLabel(repartidor.cantidadPedidos)}`
                       : `${repartidor.cantidadPedidos} de ${MAX_PEDIDOS_REPARTIDOR} pedidos en camino`}
                   </AppText>
                 </View>
 
                 <Badge
                   label={cargaLabel(repartidor.cantidadPedidos)}
-                  tone={lleno ? 'danger' : repartidor.cantidadPedidos === 0 ? 'neutral' : 'warning'}
+                  icon="bicycle-outline"
+                  tone={lleno ? 'warning' : repartidor.cantidadPedidos === 0 ? 'neutral' : 'info'}
                 />
               </Pressable>
             );

@@ -10,12 +10,21 @@ export const ESTADO_PEDIDO_LABEL: Record<EstadoPedido, string> = {
 };
 
 export const ESTADO_PEDIDO_TONE: Record<EstadoPedido, BadgeTone> = {
-  RECIBIDO: 'info',
+  RECIBIDO: 'neutral',
   EN_PREPARACION: 'warning',
-  EN_CAMINO: 'accent',
+  EN_CAMINO: 'info',
   ENTREGADO: 'success',
   CANCELADO: 'danger',
 };
+
+/** DESIGN 4 / 8.14: cada estado se muestra con icono + texto + color. */
+export const ESTADO_PEDIDO_ICON = {
+  RECIBIDO: 'receipt-outline',
+  EN_PREPARACION: 'restaurant-outline',
+  EN_CAMINO: 'bicycle-outline',
+  ENTREGADO: 'checkmark-circle-outline',
+  CANCELADO: 'close-circle-outline',
+} as const satisfies Record<EstadoPedido, string>;
 
 export type PasoSeguimiento = {
   estado: EstadoPedido;

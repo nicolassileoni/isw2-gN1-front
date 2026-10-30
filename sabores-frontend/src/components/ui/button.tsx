@@ -48,6 +48,8 @@ export function Button({
   testID,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
+  const dimmed = disabled && !loading;
+  const contentColor = dimmed ? palette.stone : textColors[variant];
   const accessibilityState: AccessibilityState = { disabled: isDisabled, busy: loading };
 
   return (
@@ -68,13 +70,13 @@ export function Button({
         variant === 'destructive' && styles.destructive,
         fullWidth && styles.fullWidth,
         pressed && !isDisabled && styles.pressed,
-        isDisabled && styles.disabled,
+        dimmed && styles.disabled,
         style,
       ]}>
       {loading ? (
         <ActivityIndicator size="small" color={textColors[variant]} />
       ) : (
-        <AppText variant="label" color={textColors[variant]}>
+        <AppText variant="label" color={contentColor}>
           {title}
         </AppText>
       )}
@@ -121,6 +123,7 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
   },
   disabled: {
-    opacity: 0.45,
+    backgroundColor: palette.fog,
+    borderColor: 'transparent',
   },
 });

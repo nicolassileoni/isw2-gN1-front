@@ -23,7 +23,7 @@ import { ApiHttpError, apiClient } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
 import type { PedidoDetalleResponse } from '@/lib/api/types';
 import { accionSegunEstado, puedeCancelarse } from '@/lib/despacho';
-import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
+import { ESTADO_PEDIDO_ICON, ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
 import { formatDateTime, formatMoney } from '@/lib/format';
 
 type AccionEnCurso = 'avanzar' | 'cancelar' | null;
@@ -211,6 +211,7 @@ function DetalleContenido() {
           </AppText>
           <Badge
             label={ESTADO_PEDIDO_LABEL[pedido.estado]}
+            icon={ESTADO_PEDIDO_ICON[pedido.estado]}
             tone={ESTADO_PEDIDO_TONE[pedido.estado]}
           />
         </View>
