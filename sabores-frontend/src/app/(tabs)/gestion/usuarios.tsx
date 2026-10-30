@@ -314,6 +314,7 @@ function UsuariosContenido() {
           ) : (
             <EmptyState
               icon="people-outline"
+              brand={!busqueda}
               title={
                 busqueda
                   ? 'No encontramos usuarios con ese dato'

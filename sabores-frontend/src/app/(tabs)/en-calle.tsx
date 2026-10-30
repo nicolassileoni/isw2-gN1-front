@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText, Badge, EmptyState, ErrorState, Screen, Skeleton } from '@/components/ui';
-import { palette, radii, spacing } from '@/constants/theme';
+import { layout, palette, radii, spacing } from '@/constants/theme';
 import { RequireSession } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
 import { apiClient } from '@/lib/api/client';
@@ -173,7 +173,7 @@ function EnCalleContenido() {
               REPARTIDORES
             </AppText>
             <AppText variant="h1">En la calle</AppText>
-            <AppText variant="caption" color={palette.warmGray}>
+            <AppText variant="body" color={palette.pewter}>
               Carga real de cada repartidor activo, hasta {MAX_PEDIDOS_REPARTIDOR} pedidos.
             </AppText>
           </View>
@@ -190,6 +190,7 @@ function EnCalleContenido() {
           ) : (
             <EmptyState
               icon="bicycle-outline"
+              brand
               title="No hay repartidores activos"
               description="Cuando actives repartidores, vas a ver su carga acá."
             />
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radii.pill,
     backgroundColor: palette.canvas,
-    minHeight: 36,
+    minHeight: layout.touchTarget,
   },
   codigoDisabled: { opacity: 0.6 },
   codigoTexto: { letterSpacing: 0.8 },

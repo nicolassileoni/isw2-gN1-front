@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/app-text';
-import { palette, spacing } from '@/constants/theme';
+import { layout, palette, spacing } from '@/constants/theme';
 
 type SectionHeaderProps = {
   title: string;
@@ -28,7 +28,7 @@ export function SectionHeader({ title, subtitle, actionLabel, onAction }: Sectio
           accessibilityLabel={actionLabel}
           hitSlop={8}
           onPress={onAction}
-          style={({ pressed }) => pressed && styles.pressed}>
+          style={({ pressed }) => [styles.action, pressed && styles.pressed]}>
           <AppText variant="label" color={palette.ember}>
             {actionLabel}
           </AppText>
@@ -48,6 +48,10 @@ const styles = StyleSheet.create({
   copy: {
     flex: 1,
     gap: spacing.xs,
+  },
+  action: {
+    minHeight: layout.touchTarget,
+    justifyContent: 'center',
   },
   pressed: {
     opacity: 0.7,

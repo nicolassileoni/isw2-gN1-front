@@ -265,6 +265,7 @@ function VentasContenido({
           ) : data && data.length === 0 ? (
             <EmptyState
               icon="trending-up-outline"
+              brand
               title="No hay locales para mostrar"
               description="Cuando existan locales adheridos, sus ventas van a aparecer acá."
               actionLabel="Ir al catálogo"

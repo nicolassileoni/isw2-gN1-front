@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { type ComponentProps } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { BrandLogo } from '@/components/brand-logo';
 import { AppText } from '@/components/ui/app-text';
 import { Button } from '@/components/ui/button';
 import { palette, radii, spacing } from '@/constants/theme';
@@ -10,6 +11,8 @@ type EmptyStateProps = {
   title: string;
   description?: string;
   icon?: ComponentProps<typeof Ionicons>['name'];
+  /** Muestra la mascota en lugar del ícono, para los vacíos principales. */
+  brand?: boolean;
   actionLabel?: string;
   onAction?: () => void;
 };
@@ -18,14 +21,19 @@ export function EmptyState({
   title,
   description,
   icon = 'storefront-outline',
+  brand = false,
   actionLabel,
   onAction,
 }: EmptyStateProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.iconCircle}>
-        <Ionicons name={icon} size={30} color={palette.stone} />
-      </View>
+      {brand ? (
+        <BrandLogo variant="mascot" width={96} style={styles.mascot} />
+      ) : (
+        <View style={styles.iconCircle}>
+          <Ionicons name={icon} size={30} color={palette.stone} />
+        </View>
+      )}
       <AppText variant="h3" style={styles.title}>
         {title}
       </AppText>
@@ -56,6 +64,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: palette.fog,
     borderRadius: radii.pill,
+    marginBottom: spacing.sm,
+  },
+  mascot: {
     marginBottom: spacing.sm,
   },
   title: {

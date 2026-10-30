@@ -3,8 +3,9 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { BrandLogo } from '@/components/brand-logo';
 import { AppText, Badge, Button, Card, Screen, TextField } from '@/components/ui';
-import { palette, radii, spacing } from '@/constants/theme';
+import { layout, palette, spacing } from '@/constants/theme';
 import { useSession } from '@/features/session/session-context';
 import { apiClient, ApiHttpError, ApiNetworkError } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
@@ -60,11 +61,7 @@ export default function PersonalScreen() {
     return (
       <Screen scroll contentContainerStyle={styles.screen}>
         <View style={styles.header}>
-          <View style={styles.brandMark}>
-            <AppText variant="label" color={palette.ink}>
-              SL
-            </AppText>
-          </View>
+          <BrandLogo variant="horizontal" width={172} style={styles.logo} />
           <AppText variant="overline" color={palette.warmGray}>
             PERSONAL
           </AppText>
@@ -93,11 +90,7 @@ export default function PersonalScreen() {
   return (
     <Screen scroll contentContainerStyle={styles.screen}>
       <View style={styles.header}>
-        <View style={styles.brandMark}>
-          <AppText variant="label" color={palette.ink}>
-            SL
-          </AppText>
-        </View>
+        <BrandLogo variant="horizontal" width={172} style={styles.logo} />
         <AppText variant="overline" color={palette.warmGray}>
           PERSONAL
         </AppText>
@@ -182,15 +175,7 @@ export default function PersonalScreen() {
 const styles = StyleSheet.create({
   screen: { gap: spacing.xxl },
   header: { gap: spacing.sm, alignItems: 'flex-start' },
-  brandMark: {
-    width: 44,
-    height: 44,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: palette.peach,
-    borderRadius: radii.input,
-    marginBottom: spacing.sm,
-  },
+  logo: { marginBottom: spacing.sm },
   form: { gap: spacing.lg },
   passwordBlock: { gap: spacing.sm },
   toggle: {
@@ -198,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.xs,
     alignSelf: 'flex-start',
-    minHeight: 32,
+    minHeight: layout.touchTarget,
   },
   pressed: { opacity: 0.7 },
   sessionRow: {

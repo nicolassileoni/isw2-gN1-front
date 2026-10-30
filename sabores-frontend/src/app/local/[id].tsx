@@ -5,7 +5,7 @@ import { Alert, Pressable, SectionList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Badge, Button, EmptyState, ErrorState, QuantityStepper, Screen, Skeleton } from '@/components/ui';
-import { layout, palette, radii, spacing } from '@/constants/theme';
+import { layout, palette, radii, shadows, spacing } from '@/constants/theme';
 import { CartSheet } from '@/features/cart/cart-sheet';
 import { useCart } from '@/features/cart/cart-context';
 import { useApi } from '@/hooks/use-api';
@@ -190,6 +190,7 @@ export default function LocalScreen() {
         ListEmptyComponent={
           <EmptyState
             icon="restaurant-outline"
+            brand
             title="Este local todavía no cargó su carta"
             description="Cuando tenga productos activos, van a aparecer acá."
           />
@@ -240,5 +241,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     backgroundColor: palette.ember,
     borderRadius: radii.card,
+    ...shadows.toast,
   },
 });

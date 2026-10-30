@@ -87,6 +87,7 @@ export default function CheckoutScreen() {
       <Screen scroll contentContainerStyle={styles.screen}>
         <EmptyState
           icon="bag-outline"
+          brand
           title="Tu pedido está vacío"
           description="Agregá productos de un local para continuar con la confirmación."
           actionLabel="Ver locales"

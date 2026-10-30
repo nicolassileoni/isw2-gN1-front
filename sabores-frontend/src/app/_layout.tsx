@@ -11,6 +11,7 @@ import { CartProvider } from '@/features/cart/cart-context';
 import { SessionProvider } from '@/features/session/session-context';
 
 void SplashScreen.preventAutoHideAsync();
+SplashScreen.setOptions({ duration: 300, fade: true });
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -101,6 +102,7 @@ export default function RootLayout() {
               headerStyle: { backgroundColor: palette.canvas },
               headerTintColor: palette.ink,
               headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
             }}
           />
         </Stack>

@@ -2,8 +2,9 @@ import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
+import { BrandLogo } from '@/components/brand-logo';
 import { AppText, Button, Card, MoneyText, Screen } from '@/components/ui';
-import { palette, radii, spacing } from '@/constants/theme';
+import { palette, spacing } from '@/constants/theme';
 import { formatDateTime, normalizeTrackingCode } from '@/lib/format';
 
 export default function ConfirmacionScreen() {
@@ -22,14 +23,18 @@ export default function ConfirmacionScreen() {
 
   return (
     <Screen scroll contentContainerStyle={styles.screen}>
-      <View style={styles.icon}><AppText variant="h2" color={palette.success}>✓</AppText></View>
+      <BrandLogo variant="mascot" width={104} style={styles.mascot} />
       <View style={styles.header}>
         <AppText variant="h1">¡Pedido confirmado!</AppText>
         <AppText variant="body" color={palette.pewter}>El local recibió tu pedido. Usá este código para seguirlo.</AppText>
       </View>
       <Card style={styles.codeCard}>
         <AppText variant="overline" color={palette.peach}>CÓDIGO DE SEGUIMIENTO</AppText>
-        <Pressable accessibilityRole="button" accessibilityLabel="Copiar código de seguimiento" onPress={copyCode}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Copiar código de seguimiento"
+          onPress={copyCode}
+          style={styles.copyArea}>
           <AppText variant="code" color={palette.white}>{trackingCode || '—'}</AppText>
           <AppText variant="caption" color={palette.peach}>Tocá para copiar</AppText>
         </Pressable>
@@ -49,9 +54,10 @@ export default function ConfirmacionScreen() {
 
 const styles = StyleSheet.create({
   screen: { alignItems: 'stretch', justifyContent: 'center', gap: spacing.xxl },
-  icon: { width: 64, height: 64, alignItems: 'center', justifyContent: 'center', alignSelf: 'center', backgroundColor: '#E8F5EE', borderRadius: radii.pill },
+  mascot: { alignSelf: 'center' },
   header: { alignItems: 'center', gap: spacing.sm },
   codeCard: { gap: spacing.md, backgroundColor: palette.ink, borderColor: palette.ink, alignItems: 'center' },
+  copyArea: { minHeight: 44, alignItems: 'center', justifyContent: 'center', gap: 2 },
   details: { gap: spacing.md },
   row: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
   actions: { gap: spacing.md },

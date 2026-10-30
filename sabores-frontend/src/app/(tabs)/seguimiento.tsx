@@ -17,7 +17,7 @@ import {
   Skeleton,
   TextField,
 } from '@/components/ui';
-import { fonts, palette, radii, spacing } from '@/constants/theme';
+import { fonts, layout, palette, radii, spacing } from '@/constants/theme';
 import { OrderTimeline } from '@/components/order-timeline';
 import { CODIGO_SEGUIMIENTO_LENGTH, useSeguimiento } from '@/features/seguimiento/use-seguimiento';
 import { ApiHttpError } from '@/lib/api/client';
@@ -241,6 +241,7 @@ export default function SeguimientoScreen() {
       {!loading && error && noEncontrado ? (
         <EmptyState
           icon="help-circle-outline"
+          brand
           title="No encontramos ese pedido"
           description="Revisá el código e intentá de nuevo. Debe tener 8 caracteres entre letras y números."
           actionLabel="Buscar otro pedido"
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     marginTop: spacing.xs,
     paddingHorizontal: spacing.md,
-    minHeight: 40,
+    minHeight: layout.touchTarget,
     borderRadius: radii.pill,
     backgroundColor: palette.peach,
   },

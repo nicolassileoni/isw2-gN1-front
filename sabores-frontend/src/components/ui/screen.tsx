@@ -26,8 +26,18 @@ export function Screen({
   style,
   ...rest
 }: ScreenProps) {
+  // `contentContainerStyle` agrupa el contenido (no el ScrollView) para que los
+  // gaps y el centrado se apliquen igual en pantallas con y sin scroll.
   const content = (
-    <View style={[styles.inner, !scroll && styles.fill, padded && styles.padded, style]} {...rest}>
+    <View
+      style={[
+        styles.inner,
+        !scroll && styles.fill,
+        padded && styles.padded,
+        contentContainerStyle,
+        style,
+      ]}
+      {...rest}>
       {children}
     </View>
   );
@@ -36,7 +46,8 @@ export function Screen({
     <SafeAreaView style={styles.safeArea} edges={edges}>
       {scroll ? (
         <ScrollView
-          contentContainerStyle={[styles.scrollContent, contentContainerStyle]}
+          contentContainerStyle={styles.scrollContent}
+          automaticallyAdjustKeyboardInsets
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
           {content}

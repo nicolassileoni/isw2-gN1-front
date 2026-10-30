@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
+import { BrandLogo } from '@/components/brand-logo';
 import { AppText, Badge, Card, EmptyState, ErrorState, Screen, SearchField, Skeleton } from '@/components/ui';
 import { palette, radii, spacing } from '@/constants/theme';
 import { useApi } from '@/hooks/use-api';
@@ -88,8 +89,7 @@ export default function HomeScreen() {
         ListHeaderComponent={
           <View style={styles.header}>
             <View style={styles.brandRow}>
-              <View style={styles.brandMark}><AppText variant="label" color={palette.ink}>SL</AppText></View>
-              <AppText variant="label" color={palette.slate}>Sabores del Litoral</AppText>
+              <BrandLogo variant="horizontal" width={172} />
             </View>
             <View style={styles.hero}>
               <Badge label="Delivery local" tone="accent" />
@@ -134,6 +134,7 @@ export default function HomeScreen() {
           ) : (
             <EmptyState
               icon="storefront-outline"
+              brand={!search}
               title={search ? 'No encontramos locales con ese nombre' : 'Todavía no hay locales disponibles'}
               description={search ? 'Probá con otra búsqueda.' : 'Cuando se sumen locales adheridos, vas a poder ver su carta y hacer un pedido.'}
               actionLabel={search ? 'Limpiar búsqueda' : undefined}
@@ -149,8 +150,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   listContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.sm, paddingBottom: spacing.xxl, gap: spacing.md },
   header: { gap: spacing.xxl, paddingBottom: spacing.sm },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  brandMark: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center', backgroundColor: palette.peach, borderRadius: radii.input },
+  brandRow: { flexDirection: 'row', alignItems: 'center' },
   hero: { gap: spacing.md },
   featureCard: { gap: spacing.lg },
   features: { gap: spacing.lg },

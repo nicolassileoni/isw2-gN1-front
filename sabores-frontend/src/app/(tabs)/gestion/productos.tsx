@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, View } from 'react-native';
 
 import {
   AppText,
@@ -15,7 +15,7 @@ import {
   Skeleton,
   Switch,
 } from '@/components/ui';
-import { layout, palette, radii, semantic, spacing } from '@/constants/theme';
+import { palette, radii, semantic, spacing } from '@/constants/theme';
 import { CatalogTabs } from '@/features/admin-catalogo/catalog-tabs';
 import { LocalSelector } from '@/features/admin-catalogo/local-selector';
 import { RequireAdmin } from '@/features/session/require-session';
@@ -63,10 +63,19 @@ function ProductRow({ producto, mutando, onEditar, onCambiarActivo }: ProductRow
             {producto.categoriaNombre} · {formatMoney(producto.precio)}
           </AppText>
         </View>
-        <Badge
-          label={producto.activo ? 'Activo' : 'Inactivo'}
-          tone={producto.activo ? 'success' : 'neutral'}
-        />
+        <View style={styles.cardTopActions}>
+          <Badge
+            label={producto.activo ? 'Activo' : 'Inactivo'}
+            tone={producto.activo ? 'success' : 'neutral'}
+          />
+          <IconButton
+            name="create-outline"
+            label={`Editar ${producto.nombre}`}
+            onPress={onEditar}
+            variant="soft"
+            size={18}
+          />
+        </View>
       </View>
 
       <View style={styles.meta}>
@@ -88,17 +97,6 @@ function ProductRow({ producto, mutando, onEditar, onCambiarActivo }: ProductRow
             producto.activo ? `Desactivar ${producto.nombre}` : `Activar ${producto.nombre}`
           }
         />
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Editar ${producto.nombre}`}
-          onPress={onEditar}
-          style={({ pressed }) => [styles.edit, pressed && styles.pressed]}>
-          <AppText variant="label" color={palette.ember}>
-            Editar
-          </AppText>
-          <Ionicons name="chevron-forward" size={16} color={palette.ember} />
-        </Pressable>
       </View>
     </View>
   );
@@ -311,6 +309,7 @@ function ProductosContenido() {
             ) : locales.length === 0 ? (
               <EmptyState
                 icon="storefront-outline"
+                brand
                 title="Todavía no hay locales"
                 description="Creá un local antes de cargar productos en su carta."
                 actionLabel="Nuevo local"
@@ -369,6 +368,7 @@ function ProductosContenido() {
           ) : (
             <EmptyState
               icon="fast-food-outline"
+              brand={!busqueda}
               title={
                 busqueda
                   ? 'No encontramos productos con ese nombre'
@@ -415,29 +415,22 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   cardTitle: { flex: 1, gap: 2 },
+  cardTopActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   meta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
   cardActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
     marginTop: spacing.xs,
     paddingTop: spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: palette.sand,
   },
-  edit: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    minHeight: layout.touchTarget,
-    paddingHorizontal: spacing.xs,
-  },
-  pressed: { opacity: 0.7 },
   warningBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',

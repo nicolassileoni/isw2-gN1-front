@@ -160,7 +160,7 @@ function PedidosContenido() {
                 PEDIDOS
               </AppText>
               <AppText variant="h1">Pedidos</AppText>
-              <AppText variant="caption" color={palette.warmGray}>
+              <AppText variant="body" color={palette.pewter}>
                 Ordenados del más antiguo al más reciente.
               </AppText>
             </View>
@@ -201,6 +201,7 @@ function PedidosContenido() {
           ) : (
             <EmptyState
               icon="receipt-outline"
+              brand={!busqueda}
               title={tituloVacio}
               description={
                 busqueda
