@@ -30,6 +30,13 @@ export type LocalResponse = {
 
 export type LocalAdminResponse = LocalResponse & { activo: boolean };
 
+/** Cuerpo de POST /api/locales y PUT /api/locales/{id}. El backend normaliza vacío a null. */
+export type LocalUpsertRequest = {
+  nombre: string;
+  direccion: string | null;
+  telefono: string | null;
+};
+
 export type ProductoCartaResponse = {
   id: number;
   nombre: string;
