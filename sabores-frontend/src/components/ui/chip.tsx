@@ -35,7 +35,7 @@ export function Chip({ label, selected = false, disabled = false, onPress, style
 
 const styles = StyleSheet.create({
   chip: {
-    minHeight: Math.max(38, layout.touchTarget - 4),
+    minHeight: layout.touchTarget,
     backgroundColor: palette.fog,
     borderColor: 'transparent',
     borderWidth: 1,

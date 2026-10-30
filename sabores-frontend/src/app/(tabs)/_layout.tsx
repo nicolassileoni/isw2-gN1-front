@@ -1,12 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { fonts, palette } from '@/constants/theme';
+import { fonts, layout, palette } from '@/constants/theme';
 import { useSession } from '@/features/session/session-context';
 
 export default function TabsLayout() {
   const { user, isAdmin } = useSession();
+  const insets = useSafeAreaInsets();
   const publico = !user;
 
   return (
@@ -16,7 +18,10 @@ export default function TabsLayout() {
         tabBarActiveTintColor: palette.ember,
         tabBarInactiveTintColor: palette.stone,
         tabBarHideOnKeyboard: true,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [
+          styles.tabBar,
+          { height: layout.tabBarHeight + insets.bottom, paddingBottom: insets.bottom },
+        ],
         tabBarLabelStyle: styles.tabLabel,
       }}>
       {/* Área pública */}

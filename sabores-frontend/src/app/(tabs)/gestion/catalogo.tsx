@@ -265,6 +265,7 @@ function CatalogoContenido() {
           ) : (
             <EmptyState
               icon="storefront-outline"
+              brand={!busqueda}
               title={busqueda ? 'No encontramos locales con ese nombre' : 'Todavía no hay locales'}
               description={
                 busqueda
