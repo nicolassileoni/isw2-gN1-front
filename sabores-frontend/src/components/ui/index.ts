@@ -14,4 +14,5 @@ export { Screen } from './screen';
 export { SearchField } from './search-field';
 export { SectionHeader } from './section-header';
 export { Skeleton } from './skeleton';
+export { Switch } from './switch';
 export { TextField } from './text-field';
