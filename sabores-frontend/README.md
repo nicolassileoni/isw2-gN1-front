@@ -1,6 +1,6 @@
 # Sabores del Litoral — Frontend mobile
 
-Aplicación mobile de delivery para Sabores del Litoral. El cliente está hecho con Expo/React Native y consume la API REST del backend Spring Boot.
+Aplicación mobile de delivery para Sabores del Litoral. El cliente está desarrollado con Expo/React Native y consume la API REST del backend Spring Boot.
 
 ## Stack
 
@@ -15,28 +15,19 @@ Aplicación mobile de delivery para Sabores del Litoral. El cliente está hecho 
 
 - Node.js 24 LTS (mínimo 22.13)
 - npm
-- Expo Go actualizado en el celular o un emulador Android/iOS
+- Expo Go actualizado o un emulador Android/iOS
+- Backend levantado en el puerto 8080
 
-## Cómo ver la app
+## Cómo ejecutar
 
-### Opción A — Expo Go en el celular
+```bash
+npm install
+npx expo start
+```
 
-1. Instalar o actualizar **Expo Go** desde App Store o Google Play. La versión actual corresponde a SDK 58.
-2. Instalar dependencias una vez:
+Luego escanear el QR con Expo Go o abrir el emulador desde la terminal.
 
-   ```bash
-   npm install
-   ```
-
-3. Iniciar el servidor de desarrollo:
-
-   ```bash
-   npx expo start
-   ```
-
-4. Escanear el QR que muestra la terminal:
-   - Android: abrir Expo Go y usar “Scan QR code”.
-   - iPhone: escanear con la cámara y abrir el enlace en Expo Go.
+### Expo Go en un celular
 
 El celular y la PC deben estar en la misma red Wi-Fi. Si la red bloquea la conexión local:
 
@@ -45,55 +36,36 @@ npx expo login
 npx expo start --tunnel
 ```
 
-### Opción B — Navegador / localhost
+El túnel solo resuelve la conexión con Metro. La app necesita igualmente acceder al backend por la IP LAN de la PC.
+
+### Navegador
 
 ```bash
 npx expo start --web
 ```
 
-Abrir la URL que imprime la terminal. Por defecto es `http://localhost:8081`; si el puerto está ocupado, Expo indica el puerto alternativo.
+Abrir la URL que imprime la terminal. Por defecto es `http://localhost:8081`; si el puerto está ocupado, Expo indica el alternativo.
 
-> `localhost:8081` es la app. El backend usa `http://localhost:8080`.
+`localhost:8081` es la app. El backend usa `http://localhost:8080`.
 
-La app se puede ver en el navegador, pero las llamadas a la API pueden fallar por CORS. Para probar el flujo completo con el backend conviene usar Expo Go o un emulador, o habilitar CORS en el backend.
-
-### Opción C — Emulador
+### Emulador
 
 - Android: `npx expo start --android` (requiere Android Studio y un emulador configurado).
 - iOS: `npx expo start --ios` (requiere macOS y Xcode).
 
-### Si Expo Go dice que el SDK es viejo
+### Si Expo Go indica que el SDK es viejo
 
-- Actualizar Expo Go desde la tienda.
-- Limpiar la caché de Metro:
-
-  ```bash
-  npx expo start -c
-  ```
-
-- Verificar versiones:
-
-  ```bash
-  npx expo install --check
-  npx expo-doctor
-  ```
-
-## Comandos
+Actualizar Expo Go desde la tienda y limpiar la caché:
 
 ```bash
-npx expo start          # servidor de desarrollo
-npx expo start -c       # servidor limpio, sin caché
-npx expo start --web    # app en el navegador
-npx expo start --android
-npx expo start --ios
-npx expo lint           # lint
-npx tsc --noEmit        # typecheck
-npx expo-doctor         # diagnóstico de dependencias/configuración
+npx expo start -c
+npx expo install --check
+npx expo-doctor
 ```
 
 ## Configuración de la API
 
-La URL del servidor se configura con `EXPO_PUBLIC_API_URL`.
+La URL del backend se configura con `EXPO_PUBLIC_API_URL`.
 
 | Entorno | URL |
 |---|---|
@@ -101,21 +73,59 @@ La URL del servidor se configura con `EXPO_PUBLIC_API_URL`.
 | Emulador Android | `http://10.0.2.2:8080` |
 | Celular físico con Expo Go | `http://<IP-LAN-de-la-PC>:8080` |
 
-El celular y la PC deben estar en la misma red y el puerto 8080 debe estar habilitado en el firewall. La app nativa no necesita CORS; la versión web sí, y el backend actual no lo configura.
+El celular y la PC deben estar en la misma red y el puerto 8080 habilitado en el firewall. En un celular, `localhost` apunta al teléfono, no a la PC.
 
-La capa HTTP usa `http://localhost:8080` si la variable no está definida. Para crear la configuración local:
+Para crear la configuración local:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Editar `.env.local` con la URL que corresponda. En un celular físico, `localhost` apunta al teléfono, no a la PC: usar la IP LAN de la computadora.
+Editar `.env.local` con la URL correspondiente. Después de cambiar la variable, reiniciar con `npx expo start -c`.
 
-Después de cambiar `EXPO_PUBLIC_API_URL`, reiniciar el servidor con `npx expo start -c` para que el nuevo valor se incluya en el bundle.
+El backend tiene CORS habilitado para la app web local. Expo Go y los emuladores no dependen de CORS.
 
-Para probar la conexión durante el desarrollo existe la ruta temporal `/api-diagnostics`, que ejecuta `GET /api/locales` y muestra los estados de carga, error o respuesta.
+## Roles y sesión
 
-Para sembrar datos de prueba con la extensión REST Client de VS Code, usar [`docs/http/seed-dev.http`](docs/http/seed-dev.http). Después de crear un local, actualizar `@localId` con el identificador recibido antes de crear sus productos.
+| Rol | Acceso |
+|---|---|
+| Público | Locales, cartas, categorías, pedidos y seguimiento por código. |
+| Operador | Pedidos, detalle, avance de estados, cancelación y pedidos en la calle. |
+| Administrador | Todo lo anterior, más locales, productos, ventas y usuarios. |
+
+El login del personal devuelve un JWT de 8 horas. El token se conserva en memoria y se envía en cada solicitud protegida como `Authorization: Bearer <token>`.
+
+- Al cerrar la app hay que volver a iniciar sesión.
+- Un `401` cierra la sesión y redirige al ingreso.
+- Un `403` indica que el rol no alcanza para esa acción.
+- Las guardas de navegación son de interfaz; el backend valida el token y el rol.
+
+## Datos de demostración
+
+El backend carga automáticamente:
+
+- `admin` / `Admin2026!`
+- `operador` / `Operador2026!`
+- 2 locales activos y 1 inactivo.
+- Productos en las 5 categorías, incluido uno sin stock y uno inactivo.
+- Pedidos `DEMO0001` a `DEMO0004` en distintos estados.
+
+La base se recrea al reiniciar el backend, por lo que los datos demo vuelven a su estado inicial.
+
+La ruta `/api-diagnostics` permite verificar la conexión con `GET /api/locales` durante el desarrollo. Para cargar datos propios, se puede usar [`docs/http/seed-dev.http`](docs/http/seed-dev.http).
+
+## Comandos
+
+```bash
+npx expo start          # servidor de desarrollo
+npx expo start -c       # servidor limpio, sin caché
+npx expo start --web
+npx expo start --android
+npx expo start --ios
+npx expo lint           # lint
+npx tsc --noEmit        # typecheck
+npx expo-doctor         # diagnóstico de dependencias/configuración
+```
 
 ## Estructura
 
@@ -123,20 +133,21 @@ Para sembrar datos de prueba con la extensión REST Client de VS Code, usar [`do
 src/
   app/                 rutas de Expo Router
     (tabs)/            Inicio, Seguir, Personal y área del personal
+    gestion/           catálogo, ventas y usuarios
     local/[id].tsx     carta del local
     pedido/[id].tsx    detalle del pedido
     checkout.tsx
     confirmacion.tsx
-  components/ui/       componentes reutilizables
-  features/            componentes y contextos de dominio
+  components/          componentes de marca y UI
+  features/            contextos y componentes de dominio
   lib/api/             cliente HTTP, rutas y tipos
+  lib/auth/            almacenamiento del token
   lib/format.ts        moneda, fechas y códigos
-  constants/theme.ts   colores, tipografía, espaciado, radios y layout
-docs/http/             colección de prueba para la API
+  constants/theme.ts   colores, tipografía, espaciado y layout
+assets/images/brand/   logo horizontal y mascota
+docs/http/             colección opcional para datos propios
 ```
 
-## Notas técnicas
+## Alcance
 
-- El backend actual no expone tokens JWT ni aplica autorización por roles.
-- La base arranca sin locales ni productos. Para probar el catálogo hay que cargarlos por H2 o por los endpoints de administración.
-- La app se mantiene en tema claro.
+La app no incluye cuentas de cliente, historial personal, pagos en línea, mapas, GPS, tiempos estimados ni seguimiento en vivo. Los locales y productos no se eliminan: se desactivan. Las categorías son fijas y se consultan desde el backend.
