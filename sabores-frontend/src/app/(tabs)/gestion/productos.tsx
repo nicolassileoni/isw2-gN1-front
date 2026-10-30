@@ -1,13 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, View } from 'react-native';
 
 import {
   AppText,
   Badge,
   Button,
-  Chip,
   EmptyState,
   ErrorState,
   IconButton,
@@ -18,6 +17,7 @@ import {
 } from '@/components/ui';
 import { layout, palette, radii, semantic, spacing } from '@/constants/theme';
 import { CatalogTabs } from '@/features/admin-catalogo/catalog-tabs';
+import { LocalSelector } from '@/features/admin-catalogo/local-selector';
 import { RequireAdmin } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
 import { ApiHttpError, apiClient } from '@/lib/api/client';
@@ -318,29 +318,13 @@ function ProductosContenido() {
               />
             ) : (
               <>
-                <View style={styles.localHeader}>
-                  <AppText variant="label">Local</AppText>
-                  {localSeleccionado ? (
-                    <Badge
-                      label={localSeleccionado.activo ? 'Activo' : 'Inactivo'}
-                      tone={localSeleccionado.activo ? 'success' : 'neutral'}
-                    />
-                  ) : null}
-                </View>
-
-                <ScrollView
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.localChips}>
-                  {locales.map((local) => (
-                    <Chip
-                      key={local.id}
-                      label={local.activo ? local.nombre : `${local.nombre} · Inactivo`}
-                      selected={localSeleccionado?.id === local.id}
-                      onPress={() => seleccionarLocal(local.id)}
-                    />
-                  ))}
-                </ScrollView>
+                <LocalSelector
+                  locales={locales}
+                  selectedId={localSeleccionado?.id ?? null}
+                  onSelect={(local) => seleccionarLocal(local.id)}
+                  label="Local"
+                  helper="Buscá por nombre o dirección para cambiar de carta."
+                />
 
                 {localSeleccionado && !localSeleccionado.activo ? (
                   <View style={styles.warningBox} accessibilityLiveRegion="polite">
@@ -413,16 +397,6 @@ const styles = StyleSheet.create({
   header: { gap: spacing.lg, paddingBottom: spacing.sm },
   topBar: { alignItems: 'flex-start', marginLeft: -spacing.sm },
   titleBlock: { gap: spacing.xs },
-  localHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-  },
-  localChips: {
-    gap: spacing.sm,
-    paddingRight: spacing.xl,
-  },
   localSkeleton: {
     gap: spacing.sm,
   },
