@@ -67,7 +67,8 @@ function LocalRow({ local, mutando, onEditar, onCambiarActivo }: LocalRowProps) 
             label={`Editar ${local.nombre}`}
             onPress={onEditar}
             variant="soft"
-            size={18}
+            size={16}
+            style={styles.editIcon}
           />
         </View>
       </View>
@@ -310,7 +311,11 @@ const styles = StyleSheet.create({
   cardTopActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing.sm,
+  },
+  editIcon: {
+    width: 28,
+    height: 28,
   },
   meta: { gap: 2 },
   cardActions: {

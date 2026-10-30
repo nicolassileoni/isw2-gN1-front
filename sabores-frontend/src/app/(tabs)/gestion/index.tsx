@@ -66,7 +66,7 @@ export default function GestionScreen() {
 
         <Card style={styles.note}>
           <AppText variant="caption" color={palette.warmGray}>
-            Los permisos de esta sección son de interfaz. El backend actual no valida roles.
+            El backend valida el token y el rol en cada solicitud. Las opciones de esta pantalla se muestran según el rol de la sesión.
           </AppText>
         </Card>
       </Screen>
