@@ -28,6 +28,7 @@ export const apiRoutes = {
   },
   repartidores: { list: '/api/repartidores', enCalle: '/api/repartidores/en-calle' },
   pedidos: {
+    create: '/api/pedidos',
     list: (estado?: EstadoPedido) => withQuery('/api/pedidos', { estado }),
     detail: (id: number) => `/api/pedidos/${id}`,
     seguimiento: (codigo: string) => `/api/pedidos/seguimiento/${encodeURIComponent(codigo)}`,

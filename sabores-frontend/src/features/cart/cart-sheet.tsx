@@ -1,4 +1,5 @@
 import { Alert, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 
 import { AppText, BottomSheet, Button, Divider, IconButton, MoneyText, QuantityStepper } from '@/components/ui';
 import { palette, spacing } from '@/constants/theme';
@@ -27,7 +28,15 @@ export function CartSheet({ visible, onClose }: CartSheetProps) {
             <AppText variant="h3">Total estimado</AppText>
             <MoneyText amount={totals.total} variant="h3" />
           </View>
-          <Button title="Continuar" disabled fullWidth />
+          <Button
+            title="Continuar"
+            disabled={items.length === 0}
+            fullWidth
+            onPress={() => {
+              onClose();
+              router.push('/checkout');
+            }}
+          />
         </View>
       }>
       <View style={styles.content}>
