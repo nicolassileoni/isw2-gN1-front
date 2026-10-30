@@ -1,10 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { useCallback, useMemo } from 'react';
-import { SectionList, StyleSheet, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { Alert, Pressable, SectionList, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Badge, Button, EmptyState, ErrorState, Screen, Skeleton } from '@/components/ui';
-import { palette, radii, spacing } from '@/constants/theme';
+import { AppText, Badge, Button, EmptyState, ErrorState, QuantityStepper, Screen, Skeleton } from '@/components/ui';
+import { layout, palette, radii, spacing } from '@/constants/theme';
+import { CartSheet } from '@/features/cart/cart-sheet';
+import { useCart } from '@/features/cart/cart-context';
 import { useApi } from '@/hooks/use-api';
 import { apiClient, ApiHttpError } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
@@ -31,7 +34,17 @@ function CartaSkeleton() {
   );
 }
 
-function ProductoRow({ producto }: { producto: ProductoCartaResponse }) {
+function ProductoRow({
+  producto,
+  cantidad,
+  onAdd,
+  onChangeQuantity,
+}: {
+  producto: ProductoCartaResponse;
+  cantidad: number;
+  onAdd: () => void;
+  onChangeQuantity: (cantidad: number) => void;
+}) {
   const sinStock = !producto.disponible || producto.stock === 0;
 
   return (
@@ -47,7 +60,18 @@ function ProductoRow({ producto }: { producto: ProductoCartaResponse }) {
         {!sinStock ? <AppText variant="caption" color={palette.warmGray}>Stock disponible: {producto.stock}</AppText> : null}
         <AppText variant="price">{formatMoney(producto.precio)}</AppText>
       </View>
-      <Button title="Agregar" size="sm" disabled />
+      {sinStock ? (
+        <Button title="Agregar" size="sm" disabled />
+      ) : cantidad > 0 ? (
+        <QuantityStepper
+          value={cantidad}
+          max={producto.stock}
+          label={`Cantidad de ${producto.nombre}`}
+          onChange={onChangeQuantity}
+        />
+      ) : (
+        <Button title="Agregar" size="sm" onPress={onAdd} />
+      )}
     </View>
   );
 }
@@ -56,6 +80,9 @@ export default function LocalScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const localId = Number(id);
   const isValidId = Number.isInteger(localId) && localId > 0;
+  const insets = useSafeAreaInsets();
+  const [cartOpen, setCartOpen] = useState(false);
+  const { local: cartLocal, cantidadTotal, totals, addProduct, replaceWithProduct, getQuantity, setQuantity } = useCart();
   const getCarta = useCallback(
     (signal: AbortSignal) => {
       if (!isValidId) return Promise.reject(new ApiHttpError(404, [], 'Este local ya no está disponible.'));
@@ -84,6 +111,26 @@ export default function LocalScreen() {
     refetchCarta();
     refetchLocal();
   };
+  const addToCart = (producto: ProductoCartaResponse) => {
+    if (!carta) return;
+    const selectedLocal = { id: carta.localId, nombre: carta.localNombre };
+    const product = {
+      productoId: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      stock: producto.stock,
+    };
+    if (addProduct(selectedLocal, product) === 'added') return;
+
+    Alert.alert(
+      '¿Cambiar de local?',
+      `Tu pedido actual es de ${cartLocal?.nombre}. Si cambiás de local, se vaciará el pedido actual.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Cambiar local', style: 'destructive', onPress: () => replaceWithProduct(selectedLocal, product) },
+      ],
+    );
+  };
 
   if (cartaLoading && !carta) {
     return <Screen edges={['bottom']} scroll contentContainerStyle={styles.screen}><CartaSkeleton /></Screen>;
@@ -102,14 +149,24 @@ export default function LocalScreen() {
     );
   }
 
+  const hasCartForCurrentLocal = cartLocal?.id === carta?.localId && cantidadTotal > 0;
+
   return (
+    <View style={styles.root}>
     <Screen padded={false} edges={['bottom']}>
       <SectionList
         sections={sections}
         keyExtractor={(producto) => String(producto.id)}
-        renderItem={({ item }) => <ProductoRow producto={item} />}
+        renderItem={({ item }) => (
+          <ProductoRow
+            producto={item}
+            cantidad={getQuantity(item.id)}
+            onAdd={() => addToCart(item)}
+            onChangeQuantity={(cantidad) => setQuantity(item.id, cantidad)}
+          />
+        )}
         renderSectionHeader={({ section }) => <AppText variant="h2" style={styles.sectionTitle}>{section.title}</AppText>}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, hasCartForCurrentLocal && { paddingBottom: layout.stickyBarHeight + insets.bottom + spacing.xl }]}
         onRefresh={refetch}
         refreshing={cartaLoading && carta !== null}
         ListHeaderComponent={
@@ -139,11 +196,27 @@ export default function LocalScreen() {
         }
       />
     </Screen>
+    {hasCartForCurrentLocal ? (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Ver pedido, ${cantidadTotal} productos`}
+        onPress={() => setCartOpen(true)}
+        style={[styles.cartBar, { bottom: insets.bottom + spacing.md }]}>
+        <View>
+          <AppText variant="label">Ver pedido · {cantidadTotal} {cantidadTotal === 1 ? 'producto' : 'productos'}</AppText>
+          <AppText variant="caption" color={palette.charcoal}>Total estimado</AppText>
+        </View>
+        <AppText variant="price">{formatMoney(totals.total)}</AppText>
+      </Pressable>
+    ) : null}
+    <CartSheet visible={cartOpen} onClose={() => setCartOpen(false)} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { gap: spacing.xxl },
+  root: { flex: 1 },
   listContent: { paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xxl },
   header: { gap: spacing.sm, paddingBottom: spacing.xxl },
   contactRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
@@ -155,4 +228,17 @@ const styles = StyleSheet.create({
   skeletonList: { gap: spacing.lg },
   skeletonProduct: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
   skeletonCopy: { flex: 1, gap: spacing.sm },
+  cartBar: {
+    position: 'absolute',
+    left: spacing.xl,
+    right: spacing.xl,
+    minHeight: layout.stickyBarHeight,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: palette.ember,
+    borderRadius: radii.card,
+  },
 });

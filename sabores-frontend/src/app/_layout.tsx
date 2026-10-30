@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
 import { fonts, palette } from '@/constants/theme';
+import { CartProvider } from '@/features/cart/cart-context';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +31,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <CartProvider>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -72,6 +73,6 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-    </>
+    </CartProvider>
   );
 }
