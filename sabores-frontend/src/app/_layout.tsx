@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 
 import { fonts, palette } from '@/constants/theme';
 import { CartProvider } from '@/features/cart/cart-context';
+import { SessionProvider } from '@/features/session/session-context';
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -31,66 +32,68 @@ export default function RootLayout() {
   }
 
   return (
-    <CartProvider>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: palette.canvas },
-          animation: 'slide_from_right',
-        }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen
-          name="checkout"
-          options={{
-            headerShown: true,
-            title: 'Confirmar pedido',
-            headerStyle: { backgroundColor: palette.canvas },
-            headerTintColor: palette.ink,
-            headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="confirmacion"
-          options={{
+    <SessionProvider>
+      <CartProvider>
+        <StatusBar style="dark" />
+        <Stack
+          screenOptions={{
             headerShown: false,
-            presentation: 'fullScreenModal',
-          }}
-        />
-        <Stack.Screen
-          name="api-diagnostics"
-          options={{
-            headerShown: true,
-            title: 'Diagnóstico API',
-            headerStyle: { backgroundColor: palette.canvas },
-            headerTintColor: palette.ink,
-            headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="local/[id]"
-          options={{
-            headerShown: true,
-            title: 'Carta',
-            headerStyle: { backgroundColor: palette.canvas },
-            headerTintColor: palette.ink,
-            headerShadowVisible: false,
-            headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
-          }}
-        />
-        <Stack.Screen
-          name="+not-found"
-          options={{
-            headerShown: true,
-            title: 'No encontrado',
-            headerStyle: { backgroundColor: palette.canvas },
-            headerTintColor: palette.ink,
-            headerShadowVisible: false,
-          }}
-        />
-      </Stack>
-    </CartProvider>
+            contentStyle: { backgroundColor: palette.canvas },
+            animation: 'slide_from_right',
+          }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen
+            name="checkout"
+            options={{
+              headerShown: true,
+              title: 'Confirmar pedido',
+              headerStyle: { backgroundColor: palette.canvas },
+              headerTintColor: palette.ink,
+              headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+            }}
+          />
+          <Stack.Screen
+            name="confirmacion"
+            options={{
+              headerShown: false,
+              presentation: 'fullScreenModal',
+            }}
+          />
+          <Stack.Screen
+            name="api-diagnostics"
+            options={{
+              headerShown: true,
+              title: 'Diagnóstico API',
+              headerStyle: { backgroundColor: palette.canvas },
+              headerTintColor: palette.ink,
+              headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+            }}
+          />
+          <Stack.Screen
+            name="local/[id]"
+            options={{
+              headerShown: true,
+              title: 'Carta',
+              headerStyle: { backgroundColor: palette.canvas },
+              headerTintColor: palette.ink,
+              headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+            }}
+          />
+          <Stack.Screen
+            name="+not-found"
+            options={{
+              headerShown: true,
+              title: 'No encontrado',
+              headerStyle: { backgroundColor: palette.canvas },
+              headerTintColor: palette.ink,
+              headerShadowVisible: false,
+            }}
+          />
+        </Stack>
+      </CartProvider>
+    </SessionProvider>
   );
 }
