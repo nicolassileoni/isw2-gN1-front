@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import {
   AppText,
@@ -227,7 +229,7 @@ function ProductosContenido() {
         return;
       }
 
-      Alert.alert(
+      showAlert(
         'Desactivar producto',
         `“${producto.nombre}” no se mostrará en la carta pública. ¿Continuar?`,
         [

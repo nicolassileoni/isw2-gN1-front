@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import {
   AppText,
@@ -226,7 +228,7 @@ function UsuariosContenido() {
         return;
       }
 
-      Alert.alert(
+      showAlert(
         'Desactivar usuario',
         `“${usuario.nombreCompleto}” no podrá ingresar al sistema. ¿Continuar?`,
         [

@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { AlertHost } from '@/components/ui/app-alert';
 import { fonts, palette } from '@/constants/theme';
 import { CartProvider } from '@/features/cart/cart-context';
 import { SessionProvider } from '@/features/session/session-context';
@@ -36,6 +37,7 @@ export default function RootLayout() {
     <SessionProvider>
       <CartProvider>
         <StatusBar style="dark" />
+        <AlertHost />
         <Stack
           screenOptions={{
             headerShown: false,

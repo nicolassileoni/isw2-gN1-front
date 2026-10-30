@@ -1,6 +1,8 @@
 import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import { BrandLogo } from '@/components/brand-logo';
 import { AppText, Button, Card, MoneyText, Screen } from '@/components/ui';
@@ -18,7 +20,7 @@ export default function ConfirmacionScreen() {
   const copyCode = async () => {
     if (!trackingCode) return;
     await Clipboard.setStringAsync(trackingCode);
-    Alert.alert('Código copiado', 'Guardalo para consultar el estado de tu pedido.');
+    showAlert('Código copiado', 'Guardalo para consultar el estado de tu pedido.');
   };
 
   return (

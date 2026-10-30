@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import { OrderTimeline } from '@/components/order-timeline';
 import {
@@ -147,7 +149,7 @@ function DetalleContenido() {
   }, [pedido, setData, refetch]);
 
   const confirmarEntrega = useCallback(() => {
-    Alert.alert(
+    showAlert(
       'Marcar como entregado',
       '¿Confirmás que el pedido ya llegó al cliente? No se puede deshacer.',
       [
@@ -158,7 +160,7 @@ function DetalleContenido() {
   }, [avanzar]);
 
   const confirmarCancelacion = useCallback(() => {
-    Alert.alert(
+    showAlert(
       'Cancelar pedido',
       'Se repone el stock de todos los productos del pedido. Esta acción no se puede deshacer.',
       [

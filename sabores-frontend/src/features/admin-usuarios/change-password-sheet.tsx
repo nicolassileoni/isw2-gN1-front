@@ -1,6 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import { AppText, BottomSheet, Button, TextField } from '@/components/ui';
 import { palette, radii, semantic, spacing } from '@/constants/theme';
@@ -64,7 +66,7 @@ export function ChangePasswordSheet({ user, onClose, onSaved }: ChangePasswordSh
     setGuardando(true);
     try {
       await apiClient.patch(apiRoutes.usuarios.password(user.id), { password });
-      Alert.alert(
+      showAlert(
         'Contraseña actualizada',
         esPropio
           ? 'Usá la nueva contraseña la próxima vez que inicies sesión.'

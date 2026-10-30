@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
-import { Alert, Pressable, SectionList, StyleSheet, View } from 'react-native';
+import { Pressable, SectionList, StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Badge, Button, EmptyState, ErrorState, QuantityStepper, Screen, Skeleton } from '@/components/ui';
@@ -122,7 +124,7 @@ export default function LocalScreen() {
     };
     if (addProduct(selectedLocal, product) === 'added') return;
 
-    Alert.alert(
+    showAlert(
       '¿Cambiar de local?',
       `Tu pedido actual es de ${cartLocal?.nombre}. Si cambiás de local, se vaciará el pedido actual.`,
       [
