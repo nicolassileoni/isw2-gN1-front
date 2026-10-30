@@ -1,20 +1,27 @@
+import { useRouter } from 'expo-router';
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
 
 import type { LoginResponse, Rol } from '@/lib/api/types';
+import {
+  clearAuthToken,
+  setAuthToken,
+  subscribeToUnauthorized,
+} from '@/lib/auth/token-store';
 
 /**
  * Sesión del personal.
  *
- * El backend actual **no emite token**: el login devuelve los datos del usuario y
- * nada más. Por eso la sesión vive solo en memoria, no se envía `Authorization`
- * y no se persiste la contraseña en ningún lado. Al reiniciar la app se pierde.
+ * La sesión vive en memoria. Cuando el backend devuelve un token, se guarda en
+ * el token store para que el cliente HTTP lo envíe en `Authorization`. Al
+ * reiniciar la app la sesión se pierde y hay que volver a ingresar.
  */
 export type Sesion = LoginResponse;
 
@@ -30,10 +37,28 @@ type SessionContextValue = {
 const SessionContext = createContext<SessionContextValue | null>(null);
 
 export function SessionProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [user, setUser] = useState<Sesion | null>(null);
 
-  const login = useCallback((sesion: Sesion) => setUser(sesion), []);
-  const logout = useCallback(() => setUser(null), []);
+  const login = useCallback((sesion: Sesion) => {
+    setAuthToken(sesion.token);
+    setUser(sesion);
+  }, []);
+
+  const logout = useCallback(() => {
+    clearAuthToken();
+    setUser(null);
+  }, []);
+
+  useEffect(
+    () =>
+      subscribeToUnauthorized(() => {
+        setUser(null);
+        clearAuthToken();
+        router.replace('/(tabs)/personal');
+      }),
+    [router],
+  );
 
   const value = useMemo<SessionContextValue>(
     () => ({

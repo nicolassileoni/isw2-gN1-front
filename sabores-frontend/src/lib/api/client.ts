@@ -1,3 +1,9 @@
+import {
+  clearAuthToken,
+  emitUnauthorized,
+  getAuthToken,
+} from '@/lib/auth/token-store';
+
 import type { ErrorResponse } from './types';
 
 const DEFAULT_API_URL = 'http://localhost:8080';
@@ -71,6 +77,8 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
   options.signal?.addEventListener('abort', cancelRequest, { once: true });
 
+  const authToken = getAuthToken();
+
   try {
     const response = await fetch(`${apiBaseUrl}${path}`, {
       ...options,
@@ -78,12 +86,18 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       headers: {
         Accept: 'application/json',
         ...(options.body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
     const payload = await parseBody(response);
 
     if (!response.ok) {
+      if (response.status === 401 && authToken && !path.startsWith('/api/auth/login')) {
+        clearAuthToken();
+        emitUnauthorized();
+      }
+
       const error = isErrorResponse(payload) ? payload : null;
       throw new ApiHttpError(response.status, error?.detalles, error?.mensaje);
     }
