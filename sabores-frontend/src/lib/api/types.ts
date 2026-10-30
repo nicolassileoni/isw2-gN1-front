@@ -17,6 +17,8 @@ export type LoginResponse = {
   username: string;
   nombreCompleto: string;
   rol: Rol;
+  /** Opcional para tolerar versiones del backend que todavía no emiten token. */
+  token?: string;
 };
 
 export type CategoriaResponse = { id: number; nombre: string };
