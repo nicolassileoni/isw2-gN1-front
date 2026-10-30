@@ -16,6 +16,7 @@ import {
   Switch,
 } from '@/components/ui';
 import { layout, palette, radii, semantic, spacing } from '@/constants/theme';
+import { CatalogTabs } from '@/features/admin-catalogo/catalog-tabs';
 import { RequireAdmin } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
 import { ApiHttpError, apiClient } from '@/lib/api/client';
@@ -228,6 +229,8 @@ function CatalogoContenido() {
                 Locales adheridos. Los inactivos no se muestran al público.
               </AppText>
             </View>
+
+            <CatalogTabs active="locales" />
 
             <SearchField
               value={busqueda}
