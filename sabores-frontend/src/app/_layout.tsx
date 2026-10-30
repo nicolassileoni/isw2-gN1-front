@@ -41,6 +41,24 @@ export default function RootLayout() {
         }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
+          name="checkout"
+          options={{
+            headerShown: true,
+            title: 'Confirmar pedido',
+            headerStyle: { backgroundColor: palette.canvas },
+            headerTintColor: palette.ink,
+            headerShadowVisible: false,
+            headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+          }}
+        />
+        <Stack.Screen
+          name="confirmacion"
+          options={{
+            headerShown: false,
+            presentation: 'fullScreenModal',
+          }}
+        />
+        <Stack.Screen
           name="api-diagnostics"
           options={{
             headerShown: true,
