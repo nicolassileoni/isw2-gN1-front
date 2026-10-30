@@ -15,14 +15,14 @@ import {
   MoneyText,
   Screen,
   Skeleton,
-  TextField,
 } from '@/components/ui';
 import { palette, radii, semantic, spacing } from '@/constants/theme';
+import { DateField } from '@/features/admin-ventas/date-field';
 import { RequireAdmin } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
 import { apiClient } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
-import { formatDateInput } from '@/lib/format';
+import { formatDateInput, formatDateInputLabel } from '@/lib/format';
 import type { VentaLocalResponse } from '@/lib/api/types';
 
 type Rango = { desde: string; hasta: string };
@@ -117,6 +117,7 @@ function VentasContenido({
   const totalMonto = ventas.reduce((total, venta) => total + venta.montoVendido, 0);
   const sinVentas = data !== null && data.length > 0 && totalPedidos === 0;
   const cargandoInicial = loading && data === null;
+  const hayCambios = desde !== aplicado.desde || hasta !== aplicado.hasta;
 
   return (
     <Screen padded={false} edges={['top']}>
@@ -162,37 +163,22 @@ function VentasContenido({
             </View>
 
             <Card style={styles.filterCard}>
-              <View style={styles.rangeRow}>
-                <TextField
-                  label="Desde"
-                  required
-                  value={desde}
-                  onChangeText={onCambiarDesde}
-                  placeholder="AAAA-MM-DD"
-                  maxLength={10}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="numbers-and-punctuation"
-                  error={errors.desde}
-                  containerStyle={styles.half}
-                />
-                <TextField
-                  label="Hasta"
-                  required
-                  value={hasta}
-                  onChangeText={onCambiarHasta}
-                  placeholder="AAAA-MM-DD"
-                  maxLength={10}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  keyboardType="numbers-and-punctuation"
-                  error={errors.hasta}
-                  containerStyle={styles.half}
-                />
-              </View>
+              <DateField
+                label="Desde"
+                value={desde}
+                onChangeText={onCambiarDesde}
+                error={errors.desde}
+              />
+              <DateField
+                label="Hasta"
+                value={hasta}
+                onChangeText={onCambiarHasta}
+                error={errors.hasta}
+              />
 
               <AppText variant="caption" color={palette.warmGray}>
-                Formato AAAA-MM-DD. El rango incluye ambos días.
+                Formato AAAA-MM-DD. Elegí la fecha con el calendario o escribila a mano. El rango
+                incluye ambos días.
               </AppText>
 
               <ScrollView
@@ -210,6 +196,24 @@ function VentasContenido({
               </ScrollView>
 
               <Button title="Aplicar rango" onPress={onAplicar} fullWidth />
+
+              <View style={styles.applied} accessibilityLiveRegion="polite">
+                <AppText variant="caption" color={palette.warmGray}>
+                  Rango aplicado
+                </AppText>
+                <AppText variant="label">
+                  {formatDateInputLabel(aplicado.desde)} al {formatDateInputLabel(aplicado.hasta)}
+                </AppText>
+              </View>
+
+              {hayCambios ? (
+                <View style={styles.pendingBox} accessibilityLiveRegion="polite">
+                  <Ionicons name="information-circle" size={18} color={palette.warning} />
+                  <AppText variant="caption" color={palette.warning} style={styles.infoText}>
+                    Hay cambios sin aplicar. Tocá “Aplicar rango” para consultarlos.
+                  </AppText>
+                </View>
+              ) : null}
             </Card>
 
             {cargandoInicial ? (
@@ -317,7 +321,7 @@ function VentasRango() {
       apiClient.get<VentaLocalResponse[]>(apiRoutes.ventas(aplicado.desde, aplicado.hasta), signal),
     [aplicado.desde, aplicado.hasta],
   );
-  const { data, loading, error, refetch } = useApi(getVentas);
+  const { data, loading, error, refetch, setData } = useApi(getVentas);
 
   const aplicar = (rango: Rango) => {
     if (rango.desde === aplicado.desde && rango.hasta === aplicado.hasta) {
@@ -325,6 +329,8 @@ function VentasRango() {
       return;
     }
 
+    // Evita mostrar ventas del rango anterior mientras llega la nueva consulta.
+    setData(null);
     setAplicado(rango);
   };
 
@@ -391,8 +397,20 @@ const styles = StyleSheet.create({
   topBar: { alignItems: 'flex-start', marginLeft: -spacing.sm },
   titleBlock: { gap: spacing.xs },
   filterCard: { gap: spacing.md },
-  rangeRow: { flexDirection: 'row', gap: spacing.md },
-  half: { flex: 1 },
+  applied: {
+    gap: 2,
+    paddingTop: spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: palette.sand,
+  },
+  pendingBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    padding: spacing.md,
+    borderRadius: radii.input,
+    backgroundColor: semantic.warningSoft,
+  },
   presets: { gap: spacing.sm, paddingRight: spacing.xl },
   summarySkeleton: { gap: spacing.sm, padding: spacing.lg },
   summary: {
