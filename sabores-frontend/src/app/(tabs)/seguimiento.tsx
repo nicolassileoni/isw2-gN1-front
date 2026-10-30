@@ -2,7 +2,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import {
   AppText,
@@ -193,7 +195,7 @@ export default function SeguimientoScreen() {
     if (!codigoCopiable) return;
 
     await Clipboard.setStringAsync(codigoCopiable);
-    Alert.alert('Código copiado', 'Guardalo para volver a consultar tu pedido.');
+    showAlert('Código copiado', 'Guardalo para volver a consultar tu pedido.');
   };
 
   const noEncontrado = error instanceof ApiHttpError && error.status === 404;

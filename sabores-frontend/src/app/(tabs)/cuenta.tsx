@@ -1,5 +1,7 @@
 import { router } from 'expo-router';
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 
 import { AppText, Badge, Button, Card, Divider, Screen } from '@/components/ui';
 import { palette, spacing } from '@/constants/theme';
@@ -20,7 +22,7 @@ function CuentaContenido() {
   if (!user) return null;
 
   const confirmarCierre = () => {
-    Alert.alert('Cerrar sesión', '¿Querés salir del área del personal?', [
+    showAlert('Cerrar sesión', '¿Querés salir del área del personal?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Cerrar sesión',

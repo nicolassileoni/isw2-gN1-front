@@ -1,4 +1,6 @@
-import { Alert, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
+import { showAlert } from '@/components/ui/app-alert';
 import { router } from 'expo-router';
 
 import { AppText, BottomSheet, Button, Divider, IconButton, MoneyText, QuantityStepper } from '@/components/ui';
@@ -11,7 +13,7 @@ type CartSheetProps = { visible: boolean; onClose: () => void };
 export function CartSheet({ visible, onClose }: CartSheetProps) {
   const { local, items, totals, setQuantity, removeProduct, clearCart } = useCart();
   const clearWithConfirmation = () => {
-    Alert.alert('¿Vaciar el pedido?', 'Se eliminarán todos los productos del carrito.', [
+    showAlert('¿Vaciar el pedido?', 'Se eliminarán todos los productos del carrito.', [
       { text: 'Cancelar', style: 'cancel' },
       { text: 'Vaciar', style: 'destructive', onPress: () => { clearCart(); onClose(); } },
     ]);
