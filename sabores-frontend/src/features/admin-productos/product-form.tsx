@@ -4,6 +4,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 
 import { AppText, Button, Card, TextField } from '@/components/ui';
 import { palette, radii, semantic, spacing } from '@/constants/theme';
+import { LocalSelector } from '@/features/admin-catalogo/local-selector';
 import { ApiHttpError, apiClient } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
 import type {
@@ -64,7 +65,11 @@ export function ProductForm({
   onSaved,
 }: ProductFormProps) {
   const [localId, setLocalId] = useState<number | null>(
-    producto?.localId ?? defaultLocalId ?? locales[0]?.id ?? null,
+    producto?.localId ??
+      defaultLocalId ??
+      locales.find((local) => local.activo)?.id ??
+      locales[0]?.id ??
+      null,
   );
   const [categoriaId, setCategoriaId] = useState<number | null>(
     producto?.categoriaId ?? null,
@@ -76,27 +81,15 @@ export function ProductForm({
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
-  const [sheet, setSheet] = useState<'local' | 'categoria' | null>(null);
+  const [sheet, setSheet] = useState<'categoria' | null>(null);
 
   const localSeleccionado = locales.find((local) => local.id === localId) ?? null;
   const categoriaSeleccionada = categorias.find((categoria) => categoria.id === categoriaId) ?? null;
-
-  const localOptions: SelectOption[] = locales.map((local) => ({
-    id: local.id,
-    label: local.nombre,
-    description: local.activo
-      ? local.direccion ?? undefined
-      : 'Inactivo · no visible al público',
-  }));
 
   const categoriaOptions: SelectOption[] = categorias.map((categoria) => ({
     id: categoria.id,
     label: categoria.nombre,
   }));
-
-  const localValue: SelectOption | null = localSeleccionado
-    ? { id: localSeleccionado.id, label: localSeleccionado.nombre }
-    : null;
 
   const categoriaValue: SelectOption | null = categoriaSeleccionada
     ? { id: categoriaSeleccionada.id, label: categoriaSeleccionada.nombre }
@@ -181,13 +174,17 @@ export function ProductForm({
           {producto ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}
         </AppText>
 
-        <SelectField
+        <LocalSelector
+          locales={locales}
+          selectedId={localId}
+          onSelect={(local) => {
+            setLocalId(local.id);
+            limpiarError('local');
+          }}
           label="Local"
-          value={localValue}
-          placeholder="Elegí un local"
-          onPress={() => setSheet('local')}
+          required
           error={errors.local}
-          helper="Solo se puede asociar a un local existente."
+          helper="Solo se puede asociar a un local existente. Buscá por nombre o dirección."
           disabled={guardando}
         />
 
@@ -300,18 +297,6 @@ export function ProductForm({
       <AppText variant="caption" color={palette.warmGray} style={styles.note}>
         El estado activo se cambia desde la lista. Los productos no se eliminan.
       </AppText>
-
-      <OptionSheet
-        visible={sheet === 'local'}
-        title="Elegir local"
-        options={localOptions}
-        selectedId={localId}
-        onSelect={(option) => {
-          setLocalId(option.id);
-          limpiarError('local');
-        }}
-        onClose={() => setSheet(null)}
-      />
 
       <OptionSheet
         visible={sheet === 'categoria'}

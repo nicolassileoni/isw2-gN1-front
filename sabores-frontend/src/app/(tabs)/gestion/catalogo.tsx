@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { Alert, FlatList, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, View } from 'react-native';
 
 import {
   AppText,
@@ -15,7 +15,7 @@ import {
   Skeleton,
   Switch,
 } from '@/components/ui';
-import { layout, palette, radii, semantic, spacing } from '@/constants/theme';
+import { palette, radii, semantic, spacing } from '@/constants/theme';
 import { CatalogTabs } from '@/features/admin-catalogo/catalog-tabs';
 import { RequireAdmin } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
@@ -56,10 +56,20 @@ function LocalRow({ local, mutando, onEditar, onCambiarActivo }: LocalRowProps) 
         <AppText variant="label" style={styles.cardTitle} numberOfLines={2}>
           {local.nombre}
         </AppText>
-        <Badge
-          label={local.activo ? 'Activo' : 'Inactivo'}
-          tone={local.activo ? 'success' : 'neutral'}
-        />
+
+        <View style={styles.cardTopActions}>
+          <Badge
+            label={local.activo ? 'Activo' : 'Inactivo'}
+            tone={local.activo ? 'success' : 'neutral'}
+          />
+          <IconButton
+            name="create-outline"
+            label={`Editar ${local.nombre}`}
+            onPress={onEditar}
+            variant="soft"
+            size={18}
+          />
+        </View>
       </View>
 
       <View style={styles.meta}>
@@ -72,27 +82,18 @@ function LocalRow({ local, mutando, onEditar, onCambiarActivo }: LocalRowProps) 
       </View>
 
       <View style={styles.cardActions}>
-        <Switch
-          value={local.activo}
-          onValueChange={onCambiarActivo}
-          label="Activo"
-          helper={mutando ? 'Guardando…' : undefined}
-          disabled={mutando}
-          accessibilityLabel={
-            local.activo ? `Desactivar ${local.nombre}` : `Activar ${local.nombre}`
-          }
-        />
-
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Editar ${local.nombre}`}
-          onPress={onEditar}
-          style={({ pressed }) => [styles.edit, pressed && styles.pressed]}>
-          <AppText variant="label" color={palette.ember}>
-            Editar
-          </AppText>
-          <Ionicons name="chevron-forward" size={16} color={palette.ember} />
-        </Pressable>
+        <View style={styles.switchWrap}>
+          <Switch
+            value={local.activo}
+            onValueChange={onCambiarActivo}
+            label="Activo"
+            helper={mutando ? 'Guardando…' : undefined}
+            disabled={mutando}
+            accessibilityLabel={
+              local.activo ? `Desactivar ${local.nombre}` : `Activar ${local.nombre}`
+            }
+          />
+        </View>
       </View>
     </View>
   );
@@ -305,25 +306,22 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   cardTitle: { flex: 1 },
+  cardTopActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
   meta: { gap: 2 },
   cardActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: spacing.md,
     marginTop: spacing.xs,
     paddingTop: spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: palette.sand,
   },
-  edit: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    minHeight: layout.touchTarget,
-    paddingHorizontal: spacing.xs,
-  },
-  pressed: { opacity: 0.7 },
+  switchWrap: { flex: 1 },
   errorBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
