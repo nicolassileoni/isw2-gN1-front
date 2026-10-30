@@ -41,6 +41,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Sesion | null>(null);
 
   const login = useCallback((sesion: Sesion) => {
+    if (!sesion.token) {
+      clearAuthToken();
+      setUser(null);
+      return;
+    }
+
     setAuthToken(sesion.token);
     setUser(sesion);
   }, []);
@@ -60,12 +66,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     [router],
   );
 
+  useEffect(() => {
+    if (user?.token) {
+      setAuthToken(user.token);
+    }
+  }, [user?.token]);
+
   const value = useMemo<SessionContextValue>(
     () => ({
       user,
       rol: user?.rol ?? null,
-      isAuthenticated: user !== null,
-      isAdmin: user?.rol === 'ADMIN',
+      isAuthenticated: user !== null && Boolean(user.token),
+      isAdmin: user?.rol === 'ADMIN' && Boolean(user.token),
       login,
       logout,
     }),

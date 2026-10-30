@@ -7,9 +7,9 @@ import { fonts, layout, palette } from '@/constants/theme';
 import { useSession } from '@/features/session/session-context';
 
 export default function TabsLayout() {
-  const { user, isAdmin } = useSession();
+  const { isAuthenticated, isAdmin } = useSession();
   const insets = useSafeAreaInsets();
-  const publico = !user;
+  const publico = !isAuthenticated;
 
   return (
     <Tabs

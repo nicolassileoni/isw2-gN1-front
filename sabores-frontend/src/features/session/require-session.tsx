@@ -30,9 +30,8 @@ function SinAcceso({
 }
 
 /**
- * Guardas de interfaz. **No son seguridad**: el backend actual no valida roles ni
- * exige token, así que ocultar una pantalla solo evita que el usuario se confunda,
- * no que alguien llame a la API directamente.
+ * Guardas de interfaz. El backend valida el JWT y los roles; estas guardas solo
+ * evitan que el usuario vea acciones para las que no tiene permiso.
  */
 export function RequireSession({ children }: { children: ReactNode }) {
   const { isAuthenticated } = useSession();

@@ -64,9 +64,8 @@ function CuentaContenido() {
       <Card style={styles.card}>
         <AppText variant="label">Sobre esta sesión</AppText>
         <AppText variant="caption" color={palette.warmGray}>
-          La sesión vive solo en memoria y se pierde al cerrar la app. No guardamos tu contraseña
-          ni enviamos tokens: el backend actual no los emite. Las pantallas por rol son una ayuda
-          de interfaz, no una restricción de seguridad.
+          La sesión y el token viven solo en memoria y se pierden al cerrar la app. No guardamos
+          tu contraseña. El backend valida el token y el rol en cada solicitud.
         </AppText>
       </Card>
 
