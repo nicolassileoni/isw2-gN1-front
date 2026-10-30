@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import {
@@ -115,6 +115,19 @@ function PedidosContenido() {
     [filtro],
   );
   const { data, loading, error, refetch } = useApi(getPedidos);
+  const primeraVez = useRef(true);
+
+  // Al volver del detalle (donde se avanza o cancela) la lista puede haber cambiado.
+  useFocusEffect(
+    useCallback(() => {
+      if (primeraVez.current) {
+        primeraVez.current = false;
+        return;
+      }
+
+      refetch();
+    }, [refetch]),
+  );
 
   const pedidos = useMemo(() => {
     const lista = data ?? [];

@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { useCallback } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import { OrderTimeline } from '@/components/order-timeline';
 import {
   AppText,
   Badge,
+  Button,
   Card,
   Divider,
   ErrorState,
@@ -14,14 +15,29 @@ import {
   Screen,
   Skeleton,
 } from '@/components/ui';
-import { palette, radii, spacing } from '@/constants/theme';
+import { palette, radii, semantic, spacing } from '@/constants/theme';
+import { AsignarRepartidorSheet } from '@/features/despacho/asignar-repartidor-sheet';
 import { RequireSession } from '@/features/session/require-session';
 import { useApi } from '@/hooks/use-api';
 import { ApiHttpError, apiClient } from '@/lib/api/client';
 import { apiRoutes } from '@/lib/api/routes';
 import type { PedidoDetalleResponse } from '@/lib/api/types';
+import { accionSegunEstado, puedeCancelarse } from '@/lib/despacho';
 import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
 import { formatDateTime, formatMoney } from '@/lib/format';
+
+type AccionEnCurso = 'avanzar' | 'cancelar' | null;
+
+/** Traduce el error del backend a algo accionable para el operador. */
+function mensajeAccion(error: unknown, fallback: string): string {
+  if (error instanceof ApiHttpError) {
+    if (error.status === 404) return 'El pedido ya no existe. Volvé a la lista.';
+    // 400/409 traen el motivo real (transición inválida, repartidor inactivo o con 3 pedidos).
+    return error.message || fallback;
+  }
+
+  return error instanceof Error ? error.message : fallback;
+}
 
 function DetalleSkeleton() {
   return (
@@ -60,6 +76,12 @@ function DetalleContenido() {
   const pedidoId = Number(id);
   const idValido = Number.isInteger(pedidoId) && pedidoId > 0;
 
+  const [accion, setAccion] = useState<AccionEnCurso>(null);
+  const [accionError, setAccionError] = useState<string | null>(null);
+  const [hojaVisible, setHojaVisible] = useState(false);
+  // Ref además del estado: evita dos requests si se toca dos veces antes del re-render.
+  const enCurso = useRef(false);
+
   const getPedido = useCallback(
     (signal: AbortSignal) => {
       if (!idValido) {
@@ -70,7 +92,81 @@ function DetalleContenido() {
     },
     [idValido, pedidoId],
   );
-  const { data: pedido, loading, error, refetch } = useApi(getPedido);
+  const { data: pedido, loading, error, refetch, setData } = useApi(getPedido);
+
+  const ocupado = accion !== null;
+
+  const avanzar = useCallback(
+    async (body?: { repartidorId: number }) => {
+      if (!pedido || enCurso.current) return;
+
+      enCurso.current = true;
+      setAccion('avanzar');
+      setAccionError(null);
+
+      try {
+        const actualizado = await apiClient.patch<PedidoDetalleResponse>(
+          apiRoutes.pedidos.avanzar(pedido.id),
+          body,
+        );
+        // El PATCH devuelve el detalle completo: evitamos un GET extra.
+        setData(actualizado);
+        setHojaVisible(false);
+      } catch (requestError: unknown) {
+        setAccionError(mensajeAccion(requestError, 'No pudimos avanzar el pedido.'));
+        setHojaVisible(false);
+        // El estado real pudo cambiar: resincronizamos con el servidor.
+        refetch();
+      } finally {
+        enCurso.current = false;
+        setAccion(null);
+      }
+    },
+    [pedido, setData, refetch],
+  );
+
+  const cancelar = useCallback(async () => {
+    if (!pedido || enCurso.current) return;
+
+    enCurso.current = true;
+    setAccion('cancelar');
+    setAccionError(null);
+
+    try {
+      const actualizado = await apiClient.patch<PedidoDetalleResponse>(
+        apiRoutes.pedidos.cancelar(pedido.id),
+      );
+      setData(actualizado);
+    } catch (requestError: unknown) {
+      setAccionError(mensajeAccion(requestError, 'No pudimos cancelar el pedido.'));
+      refetch();
+    } finally {
+      enCurso.current = false;
+      setAccion(null);
+    }
+  }, [pedido, setData, refetch]);
+
+  const confirmarEntrega = useCallback(() => {
+    Alert.alert(
+      'Marcar como entregado',
+      '¿Confirmás que el pedido ya llegó al cliente? No se puede deshacer.',
+      [
+        { text: 'Volver', style: 'cancel' },
+        { text: 'Sí, entregado', onPress: () => void avanzar() },
+      ],
+    );
+  }, [avanzar]);
+
+  const confirmarCancelacion = useCallback(() => {
+    Alert.alert(
+      'Cancelar pedido',
+      'Se repone el stock de todos los productos del pedido. Esta acción no se puede deshacer.',
+      [
+        { text: 'Volver', style: 'cancel' },
+        { text: 'Cancelar pedido', style: 'destructive', onPress: () => void cancelar() },
+      ],
+    );
+  }, [cancelar]);
 
   if (loading && !pedido) {
     return (
@@ -99,6 +195,9 @@ function DetalleContenido() {
   }
 
   const cancelado = pedido.estado === 'CANCELADO';
+  const accionActual = accionSegunEstado(pedido.estado);
+  const cancelable = puedeCancelarse(pedido.estado);
+  const hayAcciones = accionActual !== null || cancelable;
 
   return (
     <Screen edges={['bottom']} scroll contentContainerStyle={styles.screen}>
@@ -135,6 +234,71 @@ function DetalleContenido() {
           <OrderTimeline estado={pedido.estado} />
         )}
       </Card>
+
+      {hayAcciones ? (
+        <Card style={styles.card}>
+          <AppText variant="overline" color={palette.warmGray}>
+            ACCIONES
+          </AppText>
+
+          {accionError ? (
+            <View style={styles.errorBox} accessible accessibilityLiveRegion="polite">
+              <Ionicons name="alert-circle" size={18} color={palette.danger} />
+              <AppText variant="caption" color={palette.danger} style={styles.errorText}>
+                {accionError}
+              </AppText>
+            </View>
+          ) : null}
+
+          {accionActual === 'preparar' ? (
+            <Button
+              title="Pasar a preparación"
+              fullWidth
+              loading={accion === 'avanzar'}
+              disabled={ocupado}
+              onPress={() => void avanzar()}
+            />
+          ) : null}
+
+          {accionActual === 'asignar' ? (
+            <Button
+              title="Asignar repartidor"
+              fullWidth
+              loading={accion === 'avanzar'}
+              disabled={ocupado}
+              accessibilityHint="Elegí un repartidor con menos de 3 pedidos en camino"
+              onPress={() => setHojaVisible(true)}
+            />
+          ) : null}
+
+          {accionActual === 'entregar' ? (
+            <Button
+              title="Marcar entregado"
+              fullWidth
+              loading={accion === 'avanzar'}
+              disabled={ocupado}
+              onPress={confirmarEntrega}
+            />
+          ) : null}
+
+          {cancelable ? (
+            <Button
+              title="Cancelar pedido"
+              variant="destructive"
+              fullWidth
+              loading={accion === 'cancelar'}
+              disabled={ocupado}
+              onPress={confirmarCancelacion}
+            />
+          ) : null}
+
+          <AppText variant="caption" color={palette.warmGray}>
+            {pedido.estado === 'EN_CAMINO'
+              ? 'El pedido ya está en la calle: solo se puede marcar como entregado.'
+              : 'Cancelar repone el stock de los productos.'}
+          </AppText>
+        </Card>
+      ) : null}
 
       <Card style={styles.card}>
         <AppText variant="overline" color={palette.warmGray}>
@@ -178,9 +342,13 @@ function DetalleContenido() {
         </View>
       </Card>
 
-      <AppText variant="caption" color={palette.warmGray}>
-        Las acciones para avanzar o cancelar el pedido llegan en la rama feat/despacho.
-      </AppText>
+      {hojaVisible ? (
+        <AsignarRepartidorSheet
+          asignando={accion === 'avanzar'}
+          onClose={() => setHojaVisible(false)}
+          onConfirmar={(repartidor) => void avanzar({ repartidorId: repartidor.repartidorId })}
+        />
+      ) : null}
     </Screen>
   );
 }
@@ -213,5 +381,14 @@ const styles = StyleSheet.create({
   },
   cancelled: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md },
   cancelledCopy: { flex: 1, gap: spacing.xs },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.xs,
+    padding: spacing.md,
+    borderRadius: radii.input,
+    backgroundColor: semantic.dangerSoft,
+  },
+  errorText: { flex: 1 },
   skeleton: { gap: spacing.md },
 });
