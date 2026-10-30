@@ -30,7 +30,7 @@ export default function TabsLayout() {
             <Ionicons
               name={focused ? 'storefront' : 'storefront-outline'}
               size={size}
-              color={color}
+              color={color as string}
             />
           ),
         }}
@@ -42,7 +42,7 @@ export default function TabsLayout() {
           href: publico ? undefined : null,
           tabBarAccessibilityLabel: 'Seguir pedido',
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'search' : 'search-outline'} size={size} color={color} />
+            <Ionicons name={focused ? 'search' : 'search-outline'} size={size} color={color as string} />
           ),
         }}
       />
@@ -53,7 +53,7 @@ export default function TabsLayout() {
           href: publico ? undefined : null,
           tabBarAccessibilityLabel: 'Acceso del personal',
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'person' : 'person-outline'} size={size} color={color} />
+            <Ionicons name={focused ? 'person' : 'person-outline'} size={size} color={color as string} />
           ),
         }}
       />
@@ -66,7 +66,7 @@ export default function TabsLayout() {
           href: publico ? null : undefined,
           tabBarAccessibilityLabel: 'Pedidos',
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={size} color={color} />
+            <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={size} color={color as string} />
           ),
         }}
       />
@@ -77,7 +77,7 @@ export default function TabsLayout() {
           href: publico ? null : undefined,
           tabBarAccessibilityLabel: 'Pedidos en la calle',
           tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons name={focused ? 'bicycle' : 'bicycle-outline'} size={size} color={color} />
+            <Ionicons name={focused ? 'bicycle' : 'bicycle-outline'} size={size} color={color as string} />
           ),
         }}
       />
@@ -91,7 +91,7 @@ export default function TabsLayout() {
             <Ionicons
               name={focused ? 'settings' : 'settings-outline'}
               size={size}
-              color={color}
+              color={color as string}
             />
           ),
         }}
@@ -106,7 +106,7 @@ export default function TabsLayout() {
             <Ionicons
               name={focused ? 'person-circle' : 'person-circle-outline'}
               size={size}
-              color={color}
+              color={color as string}
             />
           ),
         }}

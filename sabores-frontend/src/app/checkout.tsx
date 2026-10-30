@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View, type TextInputInstance } from 'react-native';
 
 import { AppText, Button, Card, EmptyState, ErrorState, MoneyText, Screen, TextField } from '@/components/ui';
 import { palette, spacing } from '@/constants/theme';
@@ -29,9 +29,9 @@ export default function CheckoutScreen() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const nombreRef = useRef<TextInput>(null);
-  const telefonoRef = useRef<TextInput>(null);
-  const direccionRef = useRef<TextInput>(null);
+  const nombreRef = useRef<TextInputInstance>(null);
+  const telefonoRef = useRef<TextInputInstance>(null);
+  const direccionRef = useRef<TextInputInstance>(null);
 
   const submit = async () => {
     const nextErrors = validateForm(nombre, telefono, direccion);

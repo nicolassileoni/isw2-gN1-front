@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View, type TextInput } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View, type TextInputInstance } from 'react-native';
 
 import { AppText, Button, Card, TextField } from '@/components/ui';
 import { palette, radii, semantic, spacing } from '@/constants/theme';
@@ -57,9 +57,9 @@ export function LocalForm({ local, onSaved }: LocalFormProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
 
-  const nombreRef = useRef<TextInput>(null);
-  const direccionRef = useRef<TextInput>(null);
-  const telefonoRef = useRef<TextInput>(null);
+  const nombreRef = useRef<TextInputInstance>(null);
+  const direccionRef = useRef<TextInputInstance>(null);
+  const telefonoRef = useRef<TextInputInstance>(null);
 
   const actualizar = (campo: Campo, valor: string) => {
     if (campo === 'nombre') setNombre(valor);
