@@ -4,8 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/app-text';
 import { palette, radii, spacing } from '@/constants/theme';
 import type { EstadoPedido } from '@/lib/api/types';
-
-import { PASOS_SEGUIMIENTO, indicePaso } from './estado-pedido';
+import { PASOS_SEGUIMIENTO, indicePaso } from '@/lib/estado-pedido';
 
 type OrderTimelineProps = {
   estado: EstadoPedido;

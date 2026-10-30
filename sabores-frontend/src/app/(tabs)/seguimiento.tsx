@@ -18,11 +18,11 @@ import {
   TextField,
 } from '@/components/ui';
 import { fonts, palette, radii, spacing } from '@/constants/theme';
-import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/features/seguimiento/estado-pedido';
-import { OrderTimeline } from '@/features/seguimiento/order-timeline';
+import { OrderTimeline } from '@/components/order-timeline';
 import { CODIGO_SEGUIMIENTO_LENGTH, useSeguimiento } from '@/features/seguimiento/use-seguimiento';
 import { ApiHttpError } from '@/lib/api/client';
 import type { SeguimientoResponse } from '@/lib/api/types';
+import { ESTADO_PEDIDO_LABEL, ESTADO_PEDIDO_TONE } from '@/lib/estado-pedido';
 import { formatDateTime, formatMoney, normalizeTrackingCode } from '@/lib/format';
 
 function SeguimientoSkeleton() {
