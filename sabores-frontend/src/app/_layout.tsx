@@ -83,6 +83,17 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="pedido/[id]"
+            options={{
+              headerShown: true,
+              title: 'Pedido',
+              headerStyle: { backgroundColor: palette.canvas },
+              headerTintColor: palette.ink,
+              headerShadowVisible: false,
+              headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+            }}
+          />
+          <Stack.Screen
             name="+not-found"
             options={{
               headerShown: true,
