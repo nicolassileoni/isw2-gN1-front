@@ -9,6 +9,8 @@ type ApiState<T> = {
   loading: boolean;
   error: Error | null;
   refetch: () => void;
+  /** Reemplaza los datos locales sin volver a pedirlos (útil cuando el server ya respondió). */
+  setData: (value: T | null) => void;
 };
 
 /**
@@ -22,6 +24,10 @@ export function useApi<T>(request: ApiRequest<T>): ApiState<T> {
   const [requestVersion, setRequestVersion] = useState(0);
 
   const refetch = useCallback(() => setRequestVersion((version) => version + 1), []);
+  const replaceData = useCallback((value: T | null) => {
+    setData(value);
+    setError(null);
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -45,5 +51,5 @@ export function useApi<T>(request: ApiRequest<T>): ApiState<T> {
     return () => controller.abort();
   }, [request, requestVersion]);
 
-  return { data, loading, error, refetch };
+  return { data, loading, error, refetch, setData: replaceData };
 }
