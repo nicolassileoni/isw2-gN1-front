@@ -139,7 +139,7 @@ export function UserForm({ usuario, esPropio, onSaved }: UserFormProps) {
           helper={
             editando
               ? 'El nombre de usuario no se puede cambiar.'
-              : `Sin espacios. Hasta ${USERNAME_MAX} caracteres.`
+              : `Debe ser único. Hasta ${USERNAME_MAX} caracteres.`
           }
         />
 

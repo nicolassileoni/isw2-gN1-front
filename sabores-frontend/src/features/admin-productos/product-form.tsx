@@ -24,9 +24,9 @@ type FormErrors = Partial<Record<Campo, string>>;
 
 function parsePrecio(texto: string): number | null {
   const valor = texto.trim();
-  if (!/^\d+(\.\d{1,2})?$/.test(valor)) return null;
+  if (!/^\d+(?:[.,]\d{1,2})?$/.test(valor)) return null;
 
-  const numero = Number(valor);
+  const numero = Number(valor.replace(',', '.'));
   return Number.isFinite(numero) ? numero : null;
 }
 
@@ -120,11 +120,15 @@ export function ProductForm({
     }
 
     if (precio === null) {
-      siguientes.precio = 'Ingresá un precio válido, con hasta 2 decimales.';
+      siguientes.precio = precioTexto.trim()
+        ? 'El precio debe ser un número mayor o igual a 0, con hasta 2 decimales.'
+        : 'Ingresá el precio.';
     }
 
     if (stock === null) {
-      siguientes.stock = 'Ingresá una cantidad entera de stock.';
+      siguientes.stock = stockTexto.trim()
+        ? 'El stock debe ser un número entero mayor o igual a 0.'
+        : 'Ingresá el stock.';
     }
 
     setErrors(siguientes);
@@ -203,7 +207,7 @@ export function ProductForm({
           placeholder="Elegí una categoría"
           onPress={() => setSheet('categoria')}
           error={errors.categoria}
-          helper="Las categorías vienen cargadas por el sistema."
+          helper="Las categorías son fijas. Se consultan y no se pueden crear ni editar."
           disabled={guardando}
         />
 
@@ -245,14 +249,14 @@ export function ProductForm({
             required
             value={precioTexto}
             onChangeText={(value) => {
-              setPrecioTexto(value.replace(',', '.'));
+              setPrecioTexto(value);
               limpiarError('precio');
             }}
-            placeholder="1500.50"
+            placeholder="1500,50"
             keyboardType="decimal-pad"
             editable={!guardando}
             error={errors.precio}
-            helper="Sin separador de miles. Hasta 2 decimales."
+            helper="Sin separador de miles. Hasta 2 decimales (coma o punto)."
             containerStyle={styles.half}
           />
 
@@ -261,14 +265,14 @@ export function ProductForm({
             required
             value={stockTexto}
             onChangeText={(value) => {
-              setStockTexto(value.replace(/\D/g, ''));
+              setStockTexto(value);
               limpiarError('stock');
             }}
             placeholder="10"
-            keyboardType="number-pad"
+            keyboardType="decimal-pad"
             editable={!guardando}
             error={errors.stock}
-            helper="Unidades disponibles."
+            helper="Unidades enteras. No puede ser negativo."
             containerStyle={styles.half}
           />
         </View>
